@@ -1,4 +1,4 @@
-package com.globaldelight.boom.login.api.request;
+package com.globaldelight.boom.app.login.api.request;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

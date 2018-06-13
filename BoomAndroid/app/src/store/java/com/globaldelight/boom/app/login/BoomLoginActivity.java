@@ -1,9 +1,9 @@
-package com.globaldelight.boom.login;
+package com.globaldelight.boom.app.login;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -22,9 +23,9 @@ import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.login.api.LoginApiController;
-import com.globaldelight.boom.login.api.RequestBody;
-import com.globaldelight.boom.login.api.request.SocialRequestBody;
+import com.globaldelight.boom.app.login.api.LoginApiController;
+import com.globaldelight.boom.app.login.api.RequestBody;
+import com.globaldelight.boom.app.login.api.request.SocialRequestBody;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -32,8 +33,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -59,46 +58,12 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
     private WebView mWebView;
     private ProgressBar mProgressBar;
     private CallbackManager callbackManager;
-    private String deviceId ="12345";// Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-   // private String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     private String TAG = "boomlogin";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-    }
-
-
-    private void getAuthVerify() {
-        RequestBody body = new RequestBody();
-        body.setAppid("com.globaldelight.boom3dandroid");
-        body.setApptype("android");
-        body.setDeviceid(deviceId);
-        body.setSecretkey(LoginApiController.SECRET_KEY);
-        LoginApiController.Callback client = LoginApiController.getClient(LoginApiController.APP_AUTH_BASE_URL);
-        Call<JsonElement> call = client.getToken(body);
-        call.enqueue(new Callback<JsonElement>() {
-            @Override
-            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "got token");
-                    JsonElement jsonElement = response.body();
-                    JsonObject jsonObject = jsonElement.getAsJsonObject();
-                    String access_token = jsonObject.get("appaccesstoken").getAsString();
-                    String url = LoginApiController.BASE_URL + "register/" + deviceId + "/" + access_token;
-                    hitWebView(url);
-
-                } else {
-                    Log.d(TAG, "error code-" + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonElement> call, Throwable t) {
-
-            }
-        });
     }
 
 
@@ -109,7 +74,9 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
         setSupportActionBar(toolbar);
         mWebView = findViewById(R.id.webView_boom_login);
         mProgressBar = findViewById(R.id.progress_boom_login);
-        getAuthVerify();
+        BoomAPIHelper.getInstance(this).getLoginPageUrl(result -> {
+            hitWebView(result.get());
+        });
     }
 
     private void hitWebView(String url) {
@@ -127,7 +94,10 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
                 } else if (url.startsWith("https://login.globaldelight.net/social/auth/google/")) {
                     mWebView.stopLoading();
                     loginWithGp();
-                } else if (url.startsWith("boomApp://")) {
+                } else if (url.startsWith("boom3dapp://")) {
+                    Uri uri = Uri.parse(url);
+                    String session = uri.getQueryParameter("session");
+                    String userid = uri.getQueryParameter("userid");
                     finish();
                 } else {
                     super.onPageStarted(view, url, favicon);
@@ -141,18 +111,14 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
     }
 
     private void loginWithFb() {
-
         FacebookSdk.sdkInitialize(this.getApplicationContext());
-
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
         callbackManager = CallbackManager.Factory.create();
-
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.d(TAG, "Facebook access token" + loginResult.getAccessToken().toString());
-                        getUserDetails(loginResult);
+                        loginWithFacebook(loginResult.getAccessToken().toString());
                     }
 
                     @Override
@@ -165,6 +131,16 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
                         // App code
                     }
                 });
+    }
+
+
+    private void loginWithFacebook(String token) {
+        String accessToken = AccessToken.getCurrentAccessToken().getToken();
+        BoomAPIHelper.getInstance(BoomLoginActivity.this).loginWithFacebook(accessToken, token, (result)->{
+            if ( result.isSuccess() ) {
+                finish();
+            }
+        });
     }
 
     protected void getUserDetails(LoginResult loginResult) {
@@ -203,14 +179,10 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
             Log.e(TAG, "display name: " + acct.getDisplayName());
 
             String personName = acct.getDisplayName();
-            String personPhotoUrl = acct.getPhotoUrl().toString();
             String email = acct.getEmail();
 
             SocialRequestBody body=new SocialRequestBody();
-          //  body.set
-
-            Log.e(TAG, "Name: " + personName + ", email: " + email
-                    + ", Image: " + personPhotoUrl);
+            Log.e(TAG, "Name: " + personName + ", email: " + email);
 
         }
     }
@@ -231,32 +203,13 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onPause() {
         super.onPause();
-        mGoogleApiClient.stopAutoManage(this);
-        mGoogleApiClient.disconnect();
+        if ( mGoogleApiClient != null ) {
+            mGoogleApiClient.stopAutoManage(this);
+            mGoogleApiClient.disconnect();
+        }
     }
 
 
-    private void sendSocialInfo(SocialRequestBody requestBody){
-        LoginApiController.Callback callback=LoginApiController.getClient(LoginApiController.APP_AUTH_BASE_URL);
-        Call<JsonElement> call=callback.sendSocialInfo(requestBody);
-        call.enqueue(new Callback<JsonElement>() {
-            @Override
-            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
-                if (response.isSuccessful()){
-                    Log.d(TAG,"Send successfully");
-
-                }else {
-                    Log.d(TAG,"error code"+response.code());
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonElement> call, Throwable t) {
-
-            }
-        });
-    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

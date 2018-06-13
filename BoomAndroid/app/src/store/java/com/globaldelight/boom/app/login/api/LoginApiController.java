@@ -1,6 +1,6 @@
-package com.globaldelight.boom.login.api;
+package com.globaldelight.boom.app.login.api;
 
-import com.globaldelight.boom.login.api.request.SocialRequestBody;
+import com.globaldelight.boom.app.login.api.request.SocialRequestBody;
 import com.google.gson.JsonElement;
 
 import java.util.concurrent.TimeUnit;

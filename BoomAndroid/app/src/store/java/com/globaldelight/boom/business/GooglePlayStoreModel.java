@@ -28,6 +28,7 @@ import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.activities.StoreActivity;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
+import com.globaldelight.boom.app.login.BoomLoginActivity;
 import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.business.inapp.InAppPurchase;
@@ -173,6 +174,11 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     @Override
     public void onDrawerItemClicked(MenuItem item, Context context) {
         switch ( item.getItemId() ) {
+
+            case R.id.boom_login:
+                mCurrentActivity.startActivity(new Intent(mCurrentActivity,BoomLoginActivity.class));
+                break;
+
             case R.id.nav_store:
                 new Handler().postDelayed(new Runnable() {
                     @Override

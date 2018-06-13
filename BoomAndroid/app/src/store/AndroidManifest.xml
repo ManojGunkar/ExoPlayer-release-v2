@@ -27,6 +27,16 @@
             android:name=".app.share.ShareDialog$ProxyActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <activity
+            android:name=".app.login.BoomLoginActivity"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+
+
     </application>
 
 </manifest>

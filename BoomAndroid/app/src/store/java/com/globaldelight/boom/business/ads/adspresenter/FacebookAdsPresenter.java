@@ -85,56 +85,56 @@ public class FacebookAdsPresenter implements AdsPresenter {
 
     public void setAdsInViewHolder(final RecyclerView.ViewHolder holder) {
 
-        param.recyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                final FbViewHolder adHolder = (FbViewHolder) holder;
-                if ( !adHolder.loaded ) {
-                    final NativeAd nativeAd = new NativeAd(adHolder.getContext(), param.fBAppId);
-                    nativeAd.setAdListener(new AbstractAdListener() {
-                        @Override
-                        public void onAdLoaded(Ad ad) {
-                            if (ad != nativeAd) {
-                                return;
-                            }
-                            adHolder.llAdContainer.setVisibility(View.VISIBLE);
-
-                            // Set the Text.
-                            adHolder.txtAdTitle.setText(nativeAd.getAdTitle());
-                            adHolder.txtAdSocialContext.setText(nativeAd.getAdSocialContext());
-                            adHolder.txtAdBody.setText(nativeAd.getAdBody());
-                            adHolder.btnAdCallToAction.setText(nativeAd.getAdCallToAction());
-
-                            // Download and display the ad icon.
-                            NativeAd.Image adIcon = nativeAd.getAdIcon();
-                            NativeAd.downloadAndDisplayImage(adIcon, adHolder.imgAdIcon);
-
-                            // Download and display the cover image.
-                            adHolder.mediaViewAd.setNativeAd(nativeAd);
-
-                            // Add the AdChoices icon
-                            AdChoicesView adChoicesView = new AdChoicesView(adHolder.getContext(), nativeAd, true);
-                            adHolder.llAdChoicesContainer.removeAllViews();
-                            adHolder.llAdChoicesContainer.addView(adChoicesView);
-
-                            // Register the Title and CTA button to listen for clicks.
-                            List<View> clickableViews = new ArrayList<>();
-                            clickableViews.add(adHolder.txtAdTitle);
-                            clickableViews.add(adHolder.btnAdCallToAction);
-                            nativeAd.registerViewForInteraction(adHolder.llAdContainer, clickableViews);
-
-                            adHolder.loaded = true;
-                        }
-
-                        @Override
-                        public void onError(Ad ad, AdError adError) {
-                            adHolder.llAdContainer.setVisibility(View.GONE);
-                        }
-                    });
-                    nativeAd.loadAd();
-                }
-            }
-        });
+//        param.recyclerView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                final FbViewHolder adHolder = (FbViewHolder) holder;
+//                if ( !adHolder.loaded ) {
+//                    final NativeAd nativeAd = new NativeAd(adHolder.getContext(), param.fBAppId);
+//                    nativeAd.setAdListener(new AbstractAdListener() {
+//                        @Override
+//                        public void onAdLoaded(Ad ad) {
+//                            if (ad != nativeAd) {
+//                                return;
+//                            }
+//                            adHolder.llAdContainer.setVisibility(View.VISIBLE);
+//
+//                            // Set the Text.
+//                            adHolder.txtAdTitle.setText(nativeAd.getAdTitle());
+//                            adHolder.txtAdSocialContext.setText(nativeAd.getAdSocialContext());
+//                            adHolder.txtAdBody.setText(nativeAd.getAdBody());
+//                            adHolder.btnAdCallToAction.setText(nativeAd.getAdCallToAction());
+//
+//                            // Download and display the ad icon.
+//                            NativeAd.Image adIcon = nativeAd.getAdIcon();
+//                            NativeAd.downloadAndDisplayImage(adIcon, adHolder.imgAdIcon);
+//
+//                            // Download and display the cover image.
+//                            adHolder.mediaViewAd.setNativeAd(nativeAd);
+//
+//                            // Add the AdChoices icon
+//                            AdChoicesView adChoicesView = new AdChoicesView(adHolder.getContext(), nativeAd, true);
+//                            adHolder.llAdChoicesContainer.removeAllViews();
+//                            adHolder.llAdChoicesContainer.addView(adChoicesView);
+//
+//                            // Register the Title and CTA button to listen for clicks.
+//                            List<View> clickableViews = new ArrayList<>();
+//                            clickableViews.add(adHolder.txtAdTitle);
+//                            clickableViews.add(adHolder.btnAdCallToAction);
+//                            nativeAd.registerViewForInteraction(adHolder.llAdContainer, clickableViews);
+//
+//                            adHolder.loaded = true;
+//                        }
+//
+//                        @Override
+//                        public void onError(Ad ad, AdError adError) {
+//                            adHolder.llAdContainer.setVisibility(View.GONE);
+//                        }
+//                    });
+//                    nativeAd.loadAd();
+//                }
+//            }
+//        });
 
     }
 
