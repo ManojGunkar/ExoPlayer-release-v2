@@ -3,6 +3,8 @@ package com.globaldelight.boom.login;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +24,14 @@ import com.facebook.login.LoginResult;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.login.api.LoginApiController;
 import com.globaldelight.boom.login.api.RequestBody;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -40,10 +50,15 @@ public class BoomLoginActivity extends AppCompatActivity {
 
     private static final int FACEBOOK_RES_CODE = 01;
     private static final int GOOGLE_RES_CODE = 02;
+
+    private GoogleApiClient mGoogleApiClient;
+
     private WebView mWebView;
     private ProgressBar mProgressBar;
     private CallbackManager callbackManager;
-    private String deviceId = "123456";
+    private String deviceId ="12345";// Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+   // private String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    private String TAG = "boomlogin";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +79,7 @@ public class BoomLoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
                 if (response.isSuccessful()) {
-                    Log.d("okhttp", "got token");
+                    Log.d(TAG, "got token");
                     JsonElement jsonElement = response.body();
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
                     String access_token = jsonObject.get("appaccesstoken").getAsString();
@@ -72,7 +87,7 @@ public class BoomLoginActivity extends AppCompatActivity {
                     hitWebView(url);
 
                 } else {
-                    Log.d("okhttp", "error code-" + response.code());
+                    Log.d(TAG, "error code-" + response.code());
                 }
             }
 
@@ -102,12 +117,13 @@ public class BoomLoginActivity extends AppCompatActivity {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                Log.d("login", "url: " + url);
+                Log.d(TAG, "url: " + url);
                 if (url.startsWith("https://login.globaldelight.net/social/auth/facebook")) {
                     mWebView.stopLoading();
                     loginWithFb();
-                } else if (url.startsWith("https://login.globaldelight.net/users/auth/google/")) {
+                } else if (url.startsWith("https://login.globaldelight.net/social/auth/google/")) {
                     mWebView.stopLoading();
+                    loginWithGp();
                 } else if (url.startsWith("boomApp://")) {
                     finish();
                 } else {
@@ -132,9 +148,8 @@ public class BoomLoginActivity extends AppCompatActivity {
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.d("okhttp", "Facebook access token" + loginResult.getAccessToken().toString());
+                        Log.d(TAG, "Facebook access token" + loginResult.getAccessToken().toString());
                         getUserDetails(loginResult);
-
                     }
 
                     @Override
@@ -147,15 +162,13 @@ public class BoomLoginActivity extends AppCompatActivity {
                         // App code
                     }
                 });
-
-
     }
 
     protected void getUserDetails(LoginResult loginResult) {
         GraphRequest data_request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(),
                 (json_object, response) -> {
-                    Log.d("okhttp", "userProfile" + json_object.toString());
+                    Log.d(TAG, "userProfile" + json_object.toString());
                 });
         Bundle permission_param = new Bundle();
         permission_param.putString("fields", "id,name,email,picture.width(120).height(120)");
@@ -163,10 +176,55 @@ public class BoomLoginActivity extends AppCompatActivity {
         data_request.executeAsync();
     }
 
+    private void loginWithGp() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, connectionResult -> {
+                    Log.d(TAG, "GPlus- Connection failed");
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, GOOGLE_RES_CODE);    }
+
+
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            GoogleSignInAccount acct = result.getSignInAccount();
+
+            Log.e(TAG, "display name: " + acct.getDisplayName());
+
+            String personName = acct.getDisplayName();
+            String personPhotoUrl = acct.getPhotoUrl().toString();
+            String email = acct.getEmail();
+
+            Log.e(TAG, "Name: " + personName + ", email: " + email
+                    + ", Image: " + personPhotoUrl);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        if (callbackManager != null)
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GOOGLE_RES_CODE) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mGoogleApiClient.stopAutoManage(this);
+        mGoogleApiClient.disconnect();
     }
 
 }
