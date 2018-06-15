@@ -27,13 +27,18 @@ import com.globaldelight.boom.app.login.api.LoginApiController;
 import com.globaldelight.boom.app.login.api.RequestBody;
 import com.globaldelight.boom.app.login.api.request.SocialRequestBody;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -52,8 +57,10 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
 
     private static final int FACEBOOK_RES_CODE = 01;
     private static final int GOOGLE_RES_CODE = 02;
+    private static final String FB_ACCESS_TOKEN = "218364201905576|tkOpImTZkiQaAu1ci-aQogE82pw";
+    private static final String SERVER_CLIENT_ID = "312070820740-1tq83s4oo4i46b6psmb09ncao9eg2mrj.apps.googleusercontent.com";
 
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInClient mGoogleClient;
 
     private WebView mWebView;
     private ProgressBar mProgressBar;
@@ -112,13 +119,13 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
 
     private void loginWithFb() {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        loginWithFacebook(loginResult.getAccessToken().toString());
+                        loginWithFacebook(loginResult);
                     }
 
                     @Override
@@ -134,56 +141,38 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
     }
 
 
-    private void loginWithFacebook(String token) {
-        String accessToken = AccessToken.getCurrentAccessToken().getToken();
-        BoomAPIHelper.getInstance(BoomLoginActivity.this).loginWithFacebook(accessToken, token, (result)->{
-            if ( result.isSuccess() ) {
+    private void loginWithFacebook(LoginResult result) {
+        BoomAPIHelper.getInstance(BoomLoginActivity.this).loginWithFacebook(FB_ACCESS_TOKEN, result.getAccessToken().getToken(), (res)->{
+            if ( res.isSuccess() ) {
                 finish();
             }
         });
     }
 
-    protected void getUserDetails(LoginResult loginResult) {
-        GraphRequest data_request = GraphRequest.newMeRequest(
-                loginResult.getAccessToken(),
-                (json_object, response) -> {
-                    Log.d(TAG, "userProfile" + json_object.toString());
-                });
-        Bundle permission_param = new Bundle();
-        permission_param.putString("fields", "id,name,email,picture.width(120).height(120)");
-        data_request.setParameters(permission_param);
-        data_request.executeAsync();
-    }
-
     private void loginWithGp() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(SERVER_CLIENT_ID)
                 .requestEmail()
-              //  .requestIdToken("862807752058-d5g81f41tptroo7p1ovihbvgg2cklq3j.apps.googleusercontent.com")
-                .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .build();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, GOOGLE_RES_CODE);
+        mGoogleClient =  GoogleSignIn.getClient(this, gso);
+        startActivityForResult(mGoogleClient.getSignInIntent(), GOOGLE_RES_CODE);
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            GoogleSignInAccount acct = result.getSignInAccount();
+    private void handleSignInResult(@NonNull Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
 
-            Log.e(TAG, "display name: " + acct.getDisplayName());
+            // TODO(developer): send ID Token to server and validate
+            BoomAPIHelper.getInstance(this).loginWithGoogle(idToken, result -> {
+                if ( result.isSuccess() ) {
 
-            String personName = acct.getDisplayName();
-            String email = acct.getEmail();
+                }
+            });
 
-            SocialRequestBody body=new SocialRequestBody();
-            Log.e(TAG, "Name: " + personName + ", email: " + email);
-
+        } catch (ApiException e) {
+            Log.w(TAG, "handleSignInResult:error", e);
         }
     }
 
@@ -193,20 +182,14 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
             callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_RES_CODE) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            String token=result.getSignInAccount().getIdToken();
-            handleSignInResult(result);
-            Log.d(TAG,"code:"+result.getStatus().getStatusCode());
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if ( mGoogleApiClient != null ) {
-            mGoogleApiClient.stopAutoManage(this);
-            mGoogleApiClient.disconnect();
-        }
     }
 
 

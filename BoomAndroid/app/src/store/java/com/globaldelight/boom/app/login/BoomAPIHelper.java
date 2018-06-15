@@ -46,18 +46,18 @@ public class BoomAPIHelper {
 
     public void getLoginPageUrl(Callback<String> callback) {
         fetchAccessToken((result -> {
-            String url = LoginApiController.BASE_URL + "register/" + Utils.getDeviceId(mContext) + "/" + result.get();
+            String url = LoginApiController.BASE_URL + "register/" + Utils.getDeviceId(mContext) + "/" + result.get() + "/screen?dv=ad";
             callback.onComplete(Result.success(url));
         }));
     }
 
-    public void loginWithFacebook(String accessToken, String token, Callback<Void> callback) {
+    public void loginWithFacebook(String accessToken, String inputToken, Callback<Void> callback) {
         SocialRequestBody req = new SocialRequestBody();
         req.setAppaccesstoken(getAccessToken());
         req.setDeviceid(Utils.getDeviceId(mContext));
         req.setSource("facebook");
         req.setAccessToken(accessToken);
-        req.setInputToken(token);
+        req.setInputToken(inputToken);
 
         sendSocialInfo(req, callback);
     }
