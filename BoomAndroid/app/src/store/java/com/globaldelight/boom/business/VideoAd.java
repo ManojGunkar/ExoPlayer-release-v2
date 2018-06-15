@@ -100,6 +100,11 @@ public class VideoAd implements RewardedVideoAdListener {
         }
     }
 
+    @Override
+    public void onRewardedVideoCompleted() {
+
+    }
+
     public interface Callback {
         void onVideoAdCompleted();
         void onVideoAdCancelled();

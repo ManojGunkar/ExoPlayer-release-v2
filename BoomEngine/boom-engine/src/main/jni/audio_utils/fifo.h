@@ -76,7 +76,7 @@ void audio_utils_fifo_deinit(struct audio_utils_fifo *fifo);
  * or partial if the FIFO was almost full.
  * A negative return value indicates an error.  Currently there are no errors defined.
  */
-ssize_t audio_utils_fifo_write(struct audio_utils_fifo *fifo, const void *buffer, size_t count);
+size_t audio_utils_fifo_write(struct audio_utils_fifo *fifo, const void *buffer, size_t count);
 
 /** Read from FIFO.
  *
@@ -90,7 +90,7 @@ ssize_t audio_utils_fifo_write(struct audio_utils_fifo *fifo, const void *buffer
  * or partial if the FIFO was almost empty.
  * A negative return value indicates an error.  Currently there are no errors defined.
  */
-ssize_t audio_utils_fifo_read(struct audio_utils_fifo *fifo, void *buffer, size_t count);
+size_t audio_utils_fifo_read(struct audio_utils_fifo *fifo, void *buffer, size_t count);
 
 #ifdef __cplusplus
 }

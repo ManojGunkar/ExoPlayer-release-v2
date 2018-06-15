@@ -83,7 +83,7 @@ static inline size_t audio_utils_fifo_diff(struct audio_utils_fifo *fifo, int32_
     return (size_t) diff;
 }
 
-ssize_t audio_utils_fifo_write(struct audio_utils_fifo *fifo, const void *buffer, size_t count)
+size_t audio_utils_fifo_write(struct audio_utils_fifo *fifo, const void *buffer, size_t count)
 {
     int32_t front = android_atomic_acquire_load(&fifo->mFront);
     int32_t rear = fifo->mRear;
@@ -110,7 +110,7 @@ ssize_t audio_utils_fifo_write(struct audio_utils_fifo *fifo, const void *buffer
     return availToWrite;
 }
 
-ssize_t audio_utils_fifo_read(struct audio_utils_fifo *fifo, void *buffer, size_t count)
+size_t audio_utils_fifo_read(struct audio_utils_fifo *fifo, void *buffer, size_t count)
 {
     int32_t rear = android_atomic_acquire_load(&fifo->mRear);
     int32_t front = fifo->mFront;
