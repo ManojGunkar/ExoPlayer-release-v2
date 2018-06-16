@@ -22,23 +22,14 @@ public class BusinessConfig {
         return 24 * MS_PER_HOUR;
     }
 
-
     public long trialPeriod() {
-        return 2 * MS_PER_MIN;
-    };
-
-    public long sharePeriod() {
-        return 5 * MS_PER_DAY;
-    };
-
-    public long sharePeriodInDays() {
-        return 5 * MS_PER_DAY;
-    };
-
-
-    public long extendedSharePeriod() {
         return 2 * MS_PER_DAY;
-    }
+    };
+
+
+    public long extendTrialPeriod() {
+        return 5 * MS_PER_DAY;
+    };
 
     public long initialPopupDelay() {
         return 30 * MS_PER_MIN;
@@ -69,6 +60,6 @@ public class BusinessConfig {
     }
 
     public int freeSongsLimit() {
-        return 3;
+        return 5;
     }
 }

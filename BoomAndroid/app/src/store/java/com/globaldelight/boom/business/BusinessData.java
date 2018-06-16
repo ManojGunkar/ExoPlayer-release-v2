@@ -15,16 +15,16 @@ import java.util.Date;
 
 public class BusinessData {
     private static final String APP_STATE_KEY = "BusinessData.state";
-    private static final String SHARED_DATE_KEY = "BusinessData.shared_date";
+    private static final String SIGNUP_DATE_KEY = "BusinessData.signup_date";
     private static final String REWARD_DATE_KEY = "BusinessData.reward_date";
-    private static final String START_DATE_KEY = "BusinessData.start_date";
+    private static final String LIMITED_DATE_KEY = "BusinessData.LIMITED_DATE";
     private static final String LAST_POPUP_DATE = "BusinessData.last_popup";
     private static final String INITIAL_POPUP_SHOWN_KEY = "BusinessData.initial_popup_shown";
     private static final String LAST_SHARE_REMINDER_KEY = "BusinessData.LAST_SHARE_REMINDER";
     private static final String LAST_PURCHASE_REMINDER_KEY = "BusinessData.LAST_PURCHASE_REMINDER";
+    private static final String SHOW_ADS_KEY = "BusinessData.SHOW_ADS";
+    private static final String LOGIN_STATE_KEY = "BusinessData.LOGIN_STATE";
 
-
-    private boolean mShowAds = false;
     private Context mContext;
     private SharedPreferences mPrefs;
     private Date mInstallDate;
@@ -41,7 +41,6 @@ public class BusinessData {
         }
     }
 
-
     public void setState(int state) {
         mPrefs.edit().putInt(APP_STATE_KEY, state).apply();
     }
@@ -50,13 +49,20 @@ public class BusinessData {
         return mPrefs.getInt(APP_STATE_KEY, -1);
     }
 
-    public void enableAds(boolean enable) {
-        mShowAds = enable;
+    public void setShowAds(boolean enable) {
+        mPrefs.edit().putBoolean(SHOW_ADS_KEY, enable).apply();
     }
 
+    public boolean shouldShowAds() {
+        return mPrefs.getBoolean(SHOW_ADS_KEY, false);
+    }
 
-    public boolean showAds() {
-        return mShowAds;
+    public void setLoginState(boolean enable) {
+        mPrefs.edit().putBoolean(LOGIN_STATE_KEY, enable).apply();
+    }
+
+    public boolean isLoggedIn() {
+        return mPrefs.getBoolean(LOGIN_STATE_KEY, false);
     }
 
 
@@ -64,14 +70,14 @@ public class BusinessData {
         return mInstallDate;
     }
 
-    public Date getSharedDate() {
-        long time = mPrefs.getLong(SHARED_DATE_KEY,0);
+    public Date getSignupDate() {
+        long time = mPrefs.getLong(SIGNUP_DATE_KEY,0);
         return time > 0 ? new Date(time) : null;
     }
 
 
-    public void setSharedDate(Date date) {
-        mPrefs.edit().putLong(SHARED_DATE_KEY, date.getTime()).apply();
+    public void setSignupDate(Date date) {
+        mPrefs.edit().putLong(SIGNUP_DATE_KEY, date.getTime()).apply();
     }
 
 
@@ -84,12 +90,12 @@ public class BusinessData {
         return time > 0 ? new Date(time) : null;
     }
 
-    public void setStartDate(Date date) {
-        mPrefs.edit().putLong(START_DATE_KEY, date.getTime()).apply();
+    public void setLastLimitedDate(Date date) {
+        mPrefs.edit().putLong(LIMITED_DATE_KEY, date.getTime()).apply();
     }
 
-    public Date getStartDate() {
-        long time = mPrefs.getLong(START_DATE_KEY,0);
+    public Date getLastLimitedDate() {
+        long time = mPrefs.getLong(LIMITED_DATE_KEY,0);
         return time > 0 ? new Date(time) : null;
     }
 

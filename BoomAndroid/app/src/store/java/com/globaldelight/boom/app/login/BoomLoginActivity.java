@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -53,6 +54,8 @@ import retrofit2.Response;
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
 public class BoomLoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
+
+    public static final String ACTION_LOGIN_SUCCESS = "com.globaldelight.boom.LOGIN_SUCCESS";
 
 
     private static final int FACEBOOK_RES_CODE = 01;
@@ -105,7 +108,7 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
                     Uri uri = Uri.parse(url);
                     String session = uri.getQueryParameter("session");
                     String userid = uri.getQueryParameter("userid");
-                    finish();
+                    onLoginSuccess();
                 } else {
                     super.onPageStarted(view, url, favicon);
                 }
@@ -143,8 +146,11 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
 
     private void loginWithFacebook(LoginResult result) {
         BoomAPIHelper.getInstance(BoomLoginActivity.this).loginWithFacebook(FB_ACCESS_TOKEN, result.getAccessToken().getToken(), (res)->{
-            if ( res.isSuccess() ) {
-                finish();
+            if ( true || res.isSuccess() ) {
+                onLoginSuccess();
+            }
+            else {
+                // show login failed
             }
         });
     }
@@ -159,6 +165,7 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
         startActivityForResult(mGoogleClient.getSignInIntent(), GOOGLE_RES_CODE);
     }
 
+
     private void handleSignInResult(@NonNull Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
@@ -167,7 +174,7 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
             // TODO(developer): send ID Token to server and validate
             BoomAPIHelper.getInstance(this).loginWithGoogle(idToken, result -> {
                 if ( result.isSuccess() ) {
-
+                    onLoginSuccess();
                 }
             });
 
@@ -197,5 +204,11 @@ public class BoomLoginActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+
+    private void onLoginSuccess() {
+        LocalBroadcastManager.getInstance(BoomLoginActivity.this).sendBroadcast(new Intent(ACTION_LOGIN_SUCCESS));
+        finish();
     }
 }

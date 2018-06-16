@@ -184,6 +184,7 @@ dependencies {
     implementation "com.mixpanel.android:mixpanel-android:5.1.4"
 
     // Dependencies for store
+    storeImplementation 'com.android.billingclient:billing:1.1'
     storeImplementation 'com.google.android.gms:play-services-ads:15.0.1'
     storeImplementation('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'
@@ -193,6 +194,7 @@ dependencies {
     }
 
     // Dependencies for production
+    productionImplementation 'com.android.billingclient:billing:1.1'
     productionImplementation 'com.google.android.gms:play-services-ads:15.0.1'
     productionImplementation('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'

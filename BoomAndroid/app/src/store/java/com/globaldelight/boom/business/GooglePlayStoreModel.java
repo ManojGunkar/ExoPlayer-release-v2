@@ -4,23 +4,18 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.GravityEnum;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.facebook.FacebookSdk;
-import com.globaldelight.boom.Constants;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
@@ -36,10 +31,12 @@ import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.utils.DefaultActivityLifecycleCallbacks;
-import com.globaldelight.boom.utils.Log;
-import com.globaldelight.boom.utils.Utils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -61,6 +58,7 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     public static final int STATE_LOCKED = 2;
     public static final int STATE_EXTENDED_TRIAL = 3;
     public static final int STATE_PURCHASED = 4;
+    public static final int STATE_LIMITED = 5;
 
 
     static class AdvertiserImpl implements Advertiser {
@@ -85,10 +83,9 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     private Activity mCurrentActivity;
     private BusinessPopup mPopup = new BusinessPopup();
     private Handler  mHandler = new Handler();
-    private boolean mWasEffectsOnWhenLocked = false;
-    private boolean mWasPlaying = false;
     private VideoAd mVideoAd;
     private Advertiser mAdsImpl;
+    private int mSongsRemaining = 0;
 
 
     private Application.ActivityLifecycleCallbacks mLifecycleCallbacks = new DefaultActivityLifecycleCallbacks() {
@@ -115,7 +112,7 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     };
 
 
-    private BroadcastReceiver mIAPReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
@@ -126,6 +123,10 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
                 case InAppPurchase.ACTION_IAP_FAILED:
                     onPurchaseFailed();
+                    break;
+
+                case BoomLoginActivity.ACTION_LOGIN_SUCCESS:
+                    onLoginSuccess();
                     break;
             }
         }
@@ -140,15 +141,15 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         FacebookSdk.sdkInitialize(mContext);
 
         App.getApplication().registerActivityLifecycleCallbacks(mLifecycleCallbacks);
-
         AudioEffect.getInstance(mContext).addObserver(this);
         App.playbackManager().registerListener(this);
 
-        IntentFilter iapFilter = new IntentFilter();
-        iapFilter.addAction(InAppPurchase.ACTION_IAP_RESTORED);
-        iapFilter.addAction(InAppPurchase.ACTION_IAP_SUCCESS);
-        iapFilter.addAction(InAppPurchase.ACTION_IAP_FAILED);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mIAPReceiver, iapFilter);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(InAppPurchase.ACTION_IAP_RESTORED);
+        filter.addAction(InAppPurchase.ACTION_IAP_SUCCESS);
+        filter.addAction(InAppPurchase.ACTION_IAP_FAILED);
+        filter.addAction(BoomLoginActivity.ACTION_LOGIN_SUCCESS);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mReceiver, filter);
         InAppPurchase.getInstance(mContext).initInAppPurchase();
     }
 
@@ -156,7 +157,7 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     @Override
     public boolean isAdsEnabled() {
         int state = data.getState();
-        return state != STATE_PURCHASED && (state == STATE_LOCKED && isTimeExpired(data.installDate(), config.adsFreeTrialPeriod()));
+        return state != STATE_PURCHASED && data.shouldShowAds();
     }
 
 
@@ -174,11 +175,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     @Override
     public void onDrawerItemClicked(MenuItem item, Context context) {
         switch ( item.getItemId() ) {
-
-            case R.id.boom_login:
-                mCurrentActivity.startActivity(new Intent(mCurrentActivity,BoomLoginActivity.class));
-                break;
-
             case R.id.nav_store:
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -200,8 +196,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         return data.getState();
     }
 
-
-
     private void setCurrentActivity(Activity activity) {
         mCurrentActivity = activity;
 
@@ -211,6 +205,7 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         // Show any pending alerts
         mPopup.showPending(mCurrentActivity);
     }
+
 
     @Override
     public EffectsScreenPolicy createEffectsScreenPolicy() {
@@ -223,39 +218,16 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
 
     public void showPurchaseDialog() {
-        if ( isLoggedIn() ) {
-            mPopup.show(mCurrentActivity,
-                    "Extend Trial",
-                    "Sign-up and extend trial for 5 days",
-                    "Sign up",
-                    "Skip",
-                    new DefaultResponse() {
-                        @Override
-                        public void onPrimaryAction() {
-                            mHandler.post(GooglePlayStoreModel.this::onLoginSuccess);
-                        }
-                    }
-            );
-
+        if ( !isLoggedIn() ) {
+            showExtendTrialDialog();
         }
         else {
-            mPopup.show(mCurrentActivity,
-                    "Subscribe",
-                    "Subscribe and use all features",
-                    "Subscribe",
-                    "Skip",
-                    new DefaultResponse() {
-                        @Override
-                        public void onPrimaryAction() {
-                            onPurchaseSuccess();
-                            setState(STATE_PURCHASED);
-                        }
-                    }
-            );
+            showSubscribeDialog();
         }
     }
 
 
+    // Handle states
     private void update() {
         if ( mCurrentActivity != null && mVideoAd == null && data.getState() == STATE_LOCKED ) {
             mVideoAd = new VideoAd(mCurrentActivity, this);
@@ -264,10 +236,12 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
         switch ( data.getState() ) {
             default:
+            case STATE_UNDEFINED:
                 setState(STATE_TRIAL);
                 break;
 
             case STATE_LOCKED:
+                checkLocked();
                 break;
 
             case STATE_PURCHASED:
@@ -281,12 +255,48 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
             case STATE_TRIAL:
                 checkTrial();
                 break;
+
+            case STATE_LIMITED:
+                checkLimited();
+                break;
         }
     }
 
+    private void checkTrial() {
+        checkAds();
+        if ( isTimeExpired(data.installDate(),config.trialPeriod()) ) {
+            setState(STATE_LOCKED);
+            showExtendTrialDialog();
+        }
+    }
+
+    private void checkExtendedTrial() {
+        checkAds();
+        if ( isTimeExpired(data.getSignupDate(),config.extendTrialPeriod()) ) {
+            setState(STATE_LIMITED);
+            showLimitedDialog();
+        }
+    }
+
+    private void checkLocked() {
+        if ( !isLoggedIn() ) {
+            return;
+        }
+
+        // TODO: Compare the day instead of 24hrs
+        Date lastDate = data.getLastLimitedDate();
+        if ( lastDate != null && isTimeExpired(lastDate, 24 * 60 * 60 * 1000L) ) {
+            setState(STATE_LIMITED);
+        }
+    }
+
+    private void checkLimited() {
+        if ( mSongsRemaining < 0 ) {
+            setState(STATE_LOCKED);
+        }
+    }
 
     private void setState(int newState) {
-        int oldState = data.getState();
         data.setState(newState);
         switch (newState) {
             case STATE_LOCKED:
@@ -294,122 +304,57 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
                 break;
 
             case STATE_EXTENDED_TRIAL:
+                AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
+                data.setSignupDate(new Date());
                 break;
 
             case STATE_PURCHASED:
+                AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
+                break;
+
+            case STATE_LIMITED:
+                AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
+                mSongsRemaining = config.freeSongsLimit();
+                data.setLastLimitedDate(new Date());
                 break;
         }
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_STATE_CHANGED));
     }
 
+
     private void lockEffects() {
-        AudioEffect.getInstance(mContext).setEnable3DSurround(true);
-        AudioEffect.getInstance(mContext).setEnableLeftFrontSpeaker(true);
-        AudioEffect.getInstance(mContext).setEnableRightFrontSpeaker(true);
-        AudioEffect.getInstance(mContext).setEnableLeftSurroundSpeaker(true);
-        AudioEffect.getInstance(mContext).setEnableRightSurroundSpeaker(true);
-        AudioEffect.getInstance(mContext).setEnableTweeter(true);
-        AudioEffect.getInstance(mContext).setEnableWoofer(true);
-
-        AudioEffect.getInstance(mContext).setEnableFullBass(false);
-        AudioEffect.getInstance(mContext).setEnableIntensity(true);
-        AudioEffect.getInstance(mContext).setIntensity(0.0f);
-
-        AudioEffect.getInstance(mContext).setEnableEqualizer(true);
-        AudioEffect.getInstance(mContext).setSelectedEqualizerPosition(Constants.EQ.AUTO);
+        AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
     }
 
 
-    private boolean mIsLoggedIn = false;
-
-    private boolean isLoggedIn() {
-        return mIsLoggedIn;
+    private void showLoginPage() {
+        mCurrentActivity.startActivity(new Intent(mCurrentActivity, BoomLoginActivity.class));
     }
 
     private void onLoginSuccess() {
-        mIsLoggedIn = true;
-        if ( hasValidPurchase() ) {
-            setState(STATE_PURCHASED);
-        }
-        else if ( !hasAvailedExtendedTrial() ) {
-            setState(STATE_EXTENDED_TRIAL);
-        }
-        else {
-            setState(STATE_LOCKED);
+        data.setLoginState(true);
+        if ( getCurrentState() != STATE_PURCHASED ) {
+            if ( !hasAvailedExtendedTrial() ) {
+                setState(STATE_EXTENDED_TRIAL);
+            }
+            else {
+                setState(STATE_LIMITED);
+            }
         }
     }
 
-    private boolean hasValidPurchase() {
-        return true;
+    private boolean isLoggedIn() {
+        return data.isLoggedIn();
     }
 
     private boolean hasAvailedExtendedTrial() {
         return false;
     }
 
-
-    private void checkTrial() {
-        if ( isTimeExpired(data.installDate(),config.trialPeriod()) ) {
-            setState(STATE_LOCKED);
-            mPopup.show(mCurrentActivity,
-                    "Trial Expired!",
-                    "Sign-up to continue",
-                    "Sign up",
-                    "Continue with Ads",
-                    new DefaultResponse() {
-                        @Override
-                        public void onPrimaryAction() {
-                            setState(STATE_EXTENDED_TRIAL);
-                        }
-                    }
-            );
-        }
-    }
-
-
-    private void checkExtendedTrial() {
-        checkAds();
-        if ( isTimeExpired(data.installDate(),config.trialPeriod()) ) {
-            mPopup.show(mCurrentActivity,
-                    "Trial Expired!",
-                    "Subscribe to continue",
-                    "Subscribe",
-                    "Continue with Ads",
-                    new BusinessPopup.Actions() {
-                        @Override
-                        public void onPrimaryAction() {
-                            setState(STATE_PURCHASED);
-                        }
-
-                        @Override
-                        public void onSecondaryAction() {
-                            setState(STATE_LOCKED);
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            setState(STATE_LOCKED);
-                        }
-                    }
-            );
-        }
-    }
-
-
     private void checkAds() {
-        if ( isTimeExpired(data.installDate(),config.adsFreeTrialPeriod()) ) {
-            // enable ads
-            mPopup.show( mCurrentActivity,
-                    "Ad free usage expired!",
-                    "Ads will start",
-                    "OK",
-                    null,
-                    new DefaultResponse() {
-                        @Override
-                        public void onPrimaryAction() {
-
-                        }
-                    });
+        if ( !data.shouldShowAds() && isTimeExpired(data.installDate(),config.adsFreeTrialPeriod()) ) {
+            data.setShowAds(true);
+            showAdsDialog();
             LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
         }
     }
@@ -419,12 +364,9 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     }
 
 
-
     private static boolean isTimeExpired(Date startDate, long period) {
         return (startDate == null) || ( System.currentTimeMillis() > startDate.getTime() + period );
     }
-
-
 
 
     public @Price int getPurchaseLevel() {
@@ -449,15 +391,18 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         }
     }
 
+
     public boolean isPurchased() {
         return data.getState() == STATE_PURCHASED;
     }
+
 
     public void onPurchaseSuccess() {
         setState(STATE_PURCHASED);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
         AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
     }
+
 
     public void onPurchaseFailed() {
         // Probably an attempt to hack the app.
@@ -469,7 +414,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
     private void showVideoAd() {
         if ( App.playbackManager().isTrackPlaying() ) {
-            mWasPlaying = true;
             App.playbackManager().playPause();
         }
         mVideoAd.show(mCurrentActivity);
@@ -491,13 +435,11 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
     }
 
+
     @Override
     public void onVideoAdCancelled() {
     }
 
-
-    private void onRemindLater() {
-    }
 
     private void postUpdate() {
         mHandler.post(this::update);
@@ -519,25 +461,29 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         }
     }
 
+
     @Override
     public void onMediaChanged() {
+        if ( getCurrentState() == STATE_LIMITED ) {
+            mSongsRemaining--;
+            Toast.makeText(mCurrentActivity,
+                    String.format("%d songs reamining", mSongsRemaining),
+                    Toast.LENGTH_LONG).show();
+        }
         postUpdate();
     }
+
 
     @Override
     public void onPlaybackCompleted() {
         postUpdate();
     }
 
+
     @Override
     public void onPlayerStateChanged() {
         postUpdate();
     }
-
-
-    private boolean mAlertIsVisible = false;
-
- //   private void showPopup(final String message, final String primaryTitle, final String secondaryTitle, final PopupResponse callback) {
 
 
     private abstract class DefaultResponse implements BusinessPopup.Actions {
@@ -550,5 +496,73 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         public void onCancel() {
 
         }
+    }
+
+
+    private void showExtendTrialDialog() {
+        mPopup.show(mCurrentActivity,
+                "Trial Expired!",
+                "Sign-up and extend trial for 5 days",
+                "Sign up",
+                "Cancel",
+                new GooglePlayStoreModel.DefaultResponse() {
+                    @Override
+                    public void onPrimaryAction() {
+                        showLoginPage();
+                    }
+                });
+    }
+
+
+    private void showAdsDialog() {
+        mPopup.show( mCurrentActivity,
+                "Ad free usage expired!",
+                "Ads will start. Subscribe to remove Ads and enjoy all features!",
+                "Subscribe",
+                "Cancel",
+                new DefaultResponse() {
+                    @Override
+                    public void onPrimaryAction() {
+                        // show store
+                    }
+
+                    @Override
+                    public void onSecondaryAction() {
+
+                    }
+        });
+    }
+
+
+    private void showLimitedDialog() {
+        mPopup.show(mCurrentActivity,
+                "Trial Expired!",
+                "Subscribe to unlock full features.",
+                "Subscribe",
+                "Cancel",
+                new DefaultResponse() {
+                    @Override
+                    public void onPrimaryAction() {
+                        setState(STATE_PURCHASED);
+                    }
+                }
+        );
+    }
+
+
+    private void showSubscribeDialog() {
+        mPopup.show(mCurrentActivity,
+                "Subscribe",
+                "Subscribe and use all features",
+                "Subscribe",
+                "Skip",
+                new DefaultResponse() {
+                    @Override
+                    public void onPrimaryAction() {
+                        onPurchaseSuccess();
+                        setState(STATE_PURCHASED);
+                    }
+                }
+        );
     }
 }

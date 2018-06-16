@@ -46,13 +46,6 @@
         android:id="@+id/menu_bottom"
         android:checkableBehavior="none">
         <item
-            android:id="@+id/boom_login"
-            android:checkable="true"
-            android:checked="true"
-            android:icon="@drawable/drawer_item_music_selector"
-            android:title="@string/boom_login" />
-
-        <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings"
             android:orderInCategory="100"

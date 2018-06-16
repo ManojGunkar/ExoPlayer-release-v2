@@ -29,12 +29,12 @@ import static com.globaldelight.boom.business.GooglePlayStoreModel.STATE_LOCKED;
 public class EffectsScreenPolicyForStore extends BroadcastReceiver implements EffectsScreenPolicy {
 
     private SwitchCompat mEffectSwitch;
-    private NegativeSeekBar mIntensitySeek;
-    private ToggleButton mFullBassCheck;
-    private TextView mSelectedEqTxt;
-    private ImageView mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
-    private CheckBox m3DSurroundBtn, mIntensityBtn, mEqualizerBtn;
-    private View mEqDialogPanel;
+//    private NegativeSeekBar mIntensitySeek;
+//    private ToggleButton mFullBassCheck;
+//    private TextView mSelectedEqTxt;
+//    private ImageView mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
+//    private CheckBox m3DSurroundBtn, mIntensityBtn, mEqualizerBtn;
+//    private View mEqDialogPanel;
 
     private Activity mActivity;
     private ViewGroup mRootView;
@@ -49,21 +49,7 @@ public class EffectsScreenPolicyForStore extends BroadcastReceiver implements Ef
         mBusinessModel = (GooglePlayStoreModel)BusinessModelFactory.getCurrentModel();
 
         mEffectSwitch = mRootView.findViewById(R.id.effect_switch);
-        m3DSurroundBtn = mRootView.findViewById(R.id.three_surround_btn);
-        mSpeakerBtn = mRootView.findViewById(R.id.speaker_btn);
-        mFullBassCheck = mRootView.findViewById(R.id.fullbass_chk);
-        mIntensityBtn = mRootView.findViewById(R.id.intensity_btn);
-        mIntensitySeek = mRootView.findViewById(R.id.intensity_seek);
-        mEqualizerBtn = mRootView.findViewById(R.id.equalizer_btn);
-        mEqDialogPanel = mRootView.findViewById(R.id.eq_dialog_panel);
-
-        m3DSurroundBtn.setOnTouchListener(this::onTouch);
-        mSpeakerBtn.setOnTouchListener(this::onTouch);
-        mFullBassCheck.setOnTouchListener(this::onTouch);
-        mIntensityBtn.setOnTouchListener(this::onTouch);
-        mIntensitySeek.setOnTouchListener(this::onTouch);
-        mEqualizerBtn.setOnTouchListener(this::onTouch);
-        mEqDialogPanel.setOnTouchListener(this::onTouch);
+        mEffectSwitch.setOnTouchListener(this::onTouch);
 
         IntentFilter filter = new IntentFilter(ACTION_STATE_CHANGED);
         LocalBroadcastManager.getInstance(mActivity).registerReceiver(this, filter);
@@ -97,26 +83,26 @@ public class EffectsScreenPolicyForStore extends BroadcastReceiver implements Ef
 
 
     private void update() {
-        final float LOCKED = 0.5f;
-        final float UNLOCKED = 1.0f;
-        if ( mBusinessModel.getCurrentState() == STATE_LOCKED ) {
-            m3DSurroundBtn.setAlpha(LOCKED);
-            mSpeakerBtn.setAlpha(LOCKED);
-            mFullBassCheck.setAlpha(LOCKED);
-            mIntensityBtn.setAlpha(LOCKED);
-            mIntensitySeek.setAlpha(LOCKED);
-            mEqualizerBtn.setAlpha(LOCKED);
-            mEqDialogPanel.setAlpha(LOCKED);
-        }
-        else {
-            m3DSurroundBtn.setAlpha(UNLOCKED);
-            mSpeakerBtn.setAlpha(UNLOCKED);
-            mFullBassCheck.setAlpha(UNLOCKED);
-            mIntensityBtn.setAlpha(UNLOCKED);
-            mIntensitySeek.setAlpha(UNLOCKED);
-            mEqualizerBtn.setAlpha(UNLOCKED);
-            mEqDialogPanel.setAlpha(UNLOCKED);
-        }
+//        final float LOCKED = 0.5f;
+//        final float UNLOCKED = 1.0f;
+//        if ( mBusinessModel.getCurrentState() == STATE_LOCKED ) {
+//            m3DSurroundBtn.setAlpha(LOCKED);
+//            mSpeakerBtn.setAlpha(LOCKED);
+//            mFullBassCheck.setAlpha(LOCKED);
+//            mIntensityBtn.setAlpha(LOCKED);
+//            mIntensitySeek.setAlpha(LOCKED);
+//            mEqualizerBtn.setAlpha(LOCKED);
+//            mEqDialogPanel.setAlpha(LOCKED);
+//        }
+//        else {
+//            m3DSurroundBtn.setAlpha(UNLOCKED);
+//            mSpeakerBtn.setAlpha(UNLOCKED);
+//            mFullBassCheck.setAlpha(UNLOCKED);
+//            mIntensityBtn.setAlpha(UNLOCKED);
+//            mIntensitySeek.setAlpha(UNLOCKED);
+//            mEqualizerBtn.setAlpha(UNLOCKED);
+//            mEqDialogPanel.setAlpha(UNLOCKED);
+//        }
     }
 
 }

@@ -42,7 +42,7 @@
 
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/store_buyButton"
+            android:id="@+id/store_buyButton_6month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/purchase_button_padding"
@@ -56,6 +56,20 @@
             android:textSize="@dimen/store_page_buy_button_text_size"
             android:typeface="normal" />
 
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/store_buyButton_1year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/purchase_button_padding"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/store_page_buy_button_bottom_space"
+            android:layout_marginTop="@dimen/store_page_buy_button_top_space"
+            android:text="@string/buy_button"
+            android:background="@drawable/store_purchase_btn"
+            android:gravity="center|center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/store_page_buy_button_text_size"
+            android:typeface="normal" />
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/store_clear_button"
@@ -72,16 +86,5 @@
             android:textSize="@dimen/store_page_buy_button_text_size"
             android:typeface="normal" />
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/store_share_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/share_title"
-            android:layout_marginBottom="@dimen/status_bar_height"
-            android:textColor="@color/share_text_color"
-            android:textSize="@dimen/share_text_size"
-            android:textStyle="normal" />
     </LinearLayout>
 </ScrollView>

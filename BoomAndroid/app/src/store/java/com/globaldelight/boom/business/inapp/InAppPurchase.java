@@ -5,21 +5,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boom.utils.Utils;
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.android.billingclient.api.Purchase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Created by Manoj Kumar on 7/11/2017.
  * @Manually commented All method by Manoj Kumar on 12 July 2017.
  */
 
-public class InAppPurchase {
+public class InAppPurchase implements PurchasesUpdatedListener {
 
     public static final String ACTION_IAP_RESTORED = "com.globaldelight.boom.IAP_RESTORED";
     public static final String ACTION_IAP_SUCCESS = "com.globaldelight.boom.IAP_SUCCESS";
@@ -28,30 +36,22 @@ public class InAppPurchase {
     /**
      * @InApp purchase requirement.
      */
-    public static final String APP_TYPE = "android";
-    public static final String COUNTRY = "IN";
-    public static final String SECRET_KEY = "e286b4b87f69a58aadbb8c38ecd6fbda7df398e8b712bd542488be9fba3a1b46";
-    public static final String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgiRZhXAbnXPjPhiuR3u6JsojGI8zmLk9YRma6j1Hc3uCXytO344tIcgHjwyNVDzMJ+U1ounor+A7ON6Uu7alb6+uuVqYgp68aA7GXg8OwHvqYJO0qzogQnPv3eyuDYtYq4EmMuc0PefCXrCdLQyUAS9bGCCianhyBknQVD8JPJZDT2mzjK73XgKT5BeWrmq1QEfWggaqXGXW+3g0DrWtC+u4BwljYrrcl3bX/KammReI/LIFKQIPb11nOrTsgG0ik2IrxaOOo0VTrDHn3Phk8Xg27/8Y7P4bAtSvQyF5U0u+vDoT6L6nKfZ4jEEwOk7XhasWL6pl7+oPzOR9NDCYEwIDAQAB";
-    public static final String SKU_INAPP_ITEM = "com.globaldelight.boom_magicalsurroundsound1";
-    public static final String SKU_INAPP_ITEM_2 = "com.globaldelight.boom_magicalsurroundsound2";
-    public static final String SKU_INAPP_ITEM_3 = "com.globaldelight.boom_magicalsurroundsound3";
-
-    private static final String IAP_ITEM1_PRICE_KEY = "com.globaldelight.boom.ITEM1_PRICE";
-    private static final String IAP_ITEM2_PRICE_KEY = "com.globaldelight.boom.ITEM2_PRICE";
-    private static final String IAP_ITEM3_PRICE_KEY = "com.globaldelight.boom.ITEM3_PRICE";
+    public static final String SKU_SUB_6MONTH = "com.globaldelight.boom_premium_6month";
+    public static final String SKU_SUB_1YEAR = "com.globaldelight.boom_premium_1year";
 
 
-    public static final String TAG="InApp Purchase";
+    private static final String TAG="InApp Purchase";
 
-    private boolean isPremium;
-    private String[] skuPrices = new String[]{"","",""};
     private Context context;
+    private HashMap<String, String> mPrices = new HashMap<>();
+    private String mPurchasedItem;
+
     private static InAppPurchase instance;
 
     /**
      * @InApp Purchase Helper class.
      */
-    private IabHelper iabHelper;
+    private BillingClient mBillingClient;
 
     /**
      * @before invoke this method check internet connection, it should available.
@@ -70,49 +70,75 @@ public class InAppPurchase {
      */
     private InAppPurchase(Context context) {
         this.context=context;
-        skuPrices[0] = Preferences.readString(context, IAP_ITEM1_PRICE_KEY, "");
-        skuPrices[1] = Preferences.readString(context, IAP_ITEM2_PRICE_KEY, "");
-        skuPrices[2] = Preferences.readString(context, IAP_ITEM3_PRICE_KEY, "");
-    }
-
-
-    private void queryPurchasedItems() throws IabHelper.IabAsyncInProgressException {
-        if (iabHelper.isSetupDone() && !iabHelper.isAsyncInProgress()) {
-            iabHelper.queryInventoryAsync(getQueryInventory());
-        }
     }
 
     /**
      * With the help of this method we can initialise InApp purchase.
      * @return Method chaining technique which bind other method with same context.
      */
-    public  InAppPurchase initInAppPurchase(){
-        iabHelper = new IabHelper(context,PUBLIC_KEY);
-        iabHelper.enableDebugLogging(true);
-        iabHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) return;
-                if (iabHelper == null) return;
-
-                ArrayList<String> skuList = new ArrayList<String>();
-                skuList.add(SKU_INAPP_ITEM);
-                skuList.add(SKU_INAPP_ITEM_2);
-                skuList.add(SKU_INAPP_ITEM_3);
-
-                try {
-                    iabHelper.queryInventoryAsync(true, skuList, null, getQueryInventory());
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    e.printStackTrace();
+    public  void initInAppPurchase(){
+        mBillingClient = BillingClient.newBuilder(context)
+                .setListener(this)
+                .build();
+        mBillingClient.startConnection(new BillingClientStateListener() {
+            @Override
+            public void onBillingSetupFinished(@BillingClient.BillingResponse int billingResponseCode) {
+                if (billingResponseCode == BillingClient.BillingResponse.OK) {
+                    // The billing client is ready. You can query purchases here.
+                    queryProductInventory();
+                    queryPurchases();
                 }
             }
+            @Override
+            public void onBillingServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+            }
         });
+    }
 
-        try {
-            queryPurchasedItems();
-        } catch (IabHelper.IabAsyncInProgressException e) {
-            e.printStackTrace();
+
+    private void queryProductInventory() {
+        List skuList = new ArrayList<> ();
+        skuList.add(SKU_SUB_6MONTH);
+        skuList.add(SKU_SUB_1YEAR);
+        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
+        params.setSkusList(skuList).setType(BillingClient.SkuType.SUBS);
+        mBillingClient.querySkuDetailsAsync(params.build(),
+                new SkuDetailsResponseListener() {
+                    @Override
+                    public void onSkuDetailsResponse(int responseCode, List skuDetailsList) {
+                        if (responseCode == BillingClient.BillingResponse.OK && skuDetailsList != null) {
+                            updatePrice(skuDetailsList);
+                        }
+                    }
+                });
+    }
+
+
+    private void updatePrice(List<SkuDetails> skuDetailsList) {
+        for (SkuDetails skuDetails : skuDetailsList) {
+            String sku = skuDetails.getSku();
+            String price = skuDetails.getPrice();
+            mPrices.put(sku, price);
         }
-        return this;
+    }
+
+
+    public void queryPurchases() {
+        boolean hadPurchase = isPurchased();
+        Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(BillingClient.SkuType.SUBS);
+        if ( purchasesResult.getResponseCode() == BillingClient.BillingResponse.OK ) {
+            List<Purchase> purchases = purchasesResult.getPurchasesList();
+            if ( purchases.size() > 0 ) {
+                mPurchasedItem = purchases.get(0).getSku();
+            }
+        }
+
+        if ( !hadPurchase && isPurchased() ) {
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_RESTORED));
+        }
+
     }
 
     private boolean mShouldClear = false;
@@ -121,183 +147,47 @@ public class InAppPurchase {
         initInAppPurchase();
     }
 
-    public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
-        return iabHelper.handleActivityResult(requestCode,resultCode,data);
-    }
-
-    /**
-     * With the help of this method we can get sku details such as price, county etc.
-     * @return which return QueryInventory listener.
-     */
-    private IabHelper.QueryInventoryFinishedListener getQueryInventory(){
-        return new IabHelper.QueryInventoryFinishedListener() {
-            @Override
-            public void onQueryInventoryFinished(IabResult result,
-                                                 Inventory inventory) {
-                if (iabHelper == null) return;
-                if (result.isFailure()) return;
-
-                Purchase premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM);
-                if ( premiumPurchase == null ) {
-                    premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM_2);
-                }
-                if ( premiumPurchase == null ) {
-                    premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM_3);
-                }
-
-                isPremium = inventory.hasPurchase(SKU_INAPP_ITEM) || inventory.hasPurchase(SKU_INAPP_ITEM_2) || inventory.hasPurchase(SKU_INAPP_ITEM_3)  ;
-                if (inventory.hasDetails(SKU_INAPP_ITEM)) {
-                    skuPrices[0] = inventory.getSkuDetails(SKU_INAPP_ITEM).getPrice();
-                    if (skuPrices[0]!=null) {
-                        Preferences.writeString(context, IAP_ITEM1_PRICE_KEY, skuPrices[0]);
-                    }
-                }
-                if (inventory.hasDetails(SKU_INAPP_ITEM_2)) {
-                    skuPrices[1] = inventory.getSkuDetails(SKU_INAPP_ITEM_2).getPrice();
-                    if (skuPrices!=null) {
-                        Preferences.writeString(context, IAP_ITEM2_PRICE_KEY, skuPrices[1]);
-                    }
-                }
-                if (inventory.hasDetails(SKU_INAPP_ITEM_3)) {
-                    skuPrices[2] = inventory.getSkuDetails(SKU_INAPP_ITEM_3).getPrice();
-                    if (skuPrices[2]!=null) {
-                        Preferences.writeString(context, IAP_ITEM3_PRICE_KEY, skuPrices[2]);
-                    }
-                }
-
-                if ( !mShouldClear ) {
-                    if (isPremium) {
-                        onPurchaseRestored();
-                    }
-                    else if (premiumPurchase != null&& verifyDeveloperPayload(premiumPurchase)) {
-                        isPremium = true;
-                        onPurchaseRestored();
-                    }
-                    else {
-                        onPurchaseFailed();
-                    }
-                }
-
-                if ( mShouldClear && premiumPurchase != null ) {
-                    try {
-                        iabHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
-                            @Override
-                            public void onConsumeFinished(Purchase purchase, IabResult result) {
-                                //Clear the purchase info from persistent storage
-                            }
-                        });
-
-                    }
-                    catch (Exception e) {
-
-                    }
-
-                    mShouldClear = false;
-                    onPurchaseFailed();
-                }
-
-                return;
-            }
-        };
-    }
-
-
 
     /**
      *You can purchase package of InApp purchase.
      * @param activity which handled by onActivityResult.
      */
     public void buyNow(Activity activity, String inAppItem) {
-        String payload = getDeviceID(context);
-        try {
-            iabHelper.launchPurchaseFlow(activity, inAppItem, Utils.PURCHASE_FLOW_LAUNCH,
-                    getPurchased(), payload);
-        } catch (IabHelper.IabAsyncInProgressException e) {
-            e.printStackTrace();
-        }
+        BillingFlowParams flowParams = BillingFlowParams.newBuilder()
+                .setSku(inAppItem)
+                .setType(BillingClient.SkuType.SUBS) // SkuType.SUB for subscription
+                .build();
+        mBillingClient.launchBillingFlow(activity, flowParams);
     }
 
-    private IabHelper.OnIabPurchaseFinishedListener getPurchased(){
-        return new IabHelper.OnIabPurchaseFinishedListener() {
-            @SuppressLint("LongLogTag")
-            public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-                if (result.isFailure()) {
-                    if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED) {
-                        onPurchaseRestored();
-                        Toast.makeText(context, context.getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
-                    } else {
-                        onPurchaseFailed();
-                        Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();                    return;
-                    }
-                    return;
-                }
-                if (!verifyDeveloperPayload(purchase)) {
-                    onPurchaseFailed();
-                    Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();                    return;
-                }
-                else {
-                    onPurchaseSuccess();
-                    Toast.makeText(context, context.getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
-                }
 
-            }
-        };
-    }
-
-    private boolean verifyDeveloperPayload(Purchase purchase) {
-        String payload = purchase.getDeveloperPayload();
-        /*
-       * TODO: verify that the developer payload of the purchase is correct.
-       * It will be the same one that you sent when initiating the purchase.
-       *
-       * WARNING: Locally generating a random string when starting a purchase
-       * and verifying it here might seem like a good approach, but this will
-       * fail in the case where the user purchases an item on one device and
-       * then uses your app on a different device, because on the other device
-       * you will not have access to the random string you originally
-       * generated.
-       *
-       * So a good developer payload has these characteristics:
-       *
-       * 1. If two different users purchase an item, the payload is different
-       * between them, so that one user's purchase can't be replayed to
-       * another user.
-       *
-       * 2. The payload must be such that you can verify it even when the app
-       * wasn't the one who initiated the purchase flow (so that items
-       * purchased by the user on one device work on other devices owned by
-       * the user).
-       *
-       * Using your own server to store and verify developer payloads across
-       * app installations is recommended.
-       */
-
-        return true;
-    }
-
-    private void onPurchaseRestored() {
-        isPremium = true;
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_RESTORED));
-    }
-
-    private void onPurchaseSuccess() {
-        isPremium = true;
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_SUCCESS));
-    }
-
-    private void onPurchaseFailed() {
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_FAILED));
-    }
-
-    public String[] getPriceList() {
-        return skuPrices;
+    public String getItemPrice(String item) {
+        return mPrices.get(item);
     }
 
     public boolean isPurchased() {
-        return isPremium;
+        return mPurchasedItem != null;
     }
 
-    private static String getDeviceID(Context context) {
-        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    @Override
+    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
+        if (responseCode == BillingClient.BillingResponse.OK
+                && purchases != null) {
+            for (Purchase purchase : purchases) {
+                mPurchasedItem = purchase.getSku();
+            }
+
+            if ( isPurchased() ) {
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_SUCCESS));
+            }
+        } else if (responseCode == BillingClient.BillingResponse.USER_CANCELED) {
+            // Handle an error caused by a user cancelling the purchase flow.
+            mPurchasedItem = null;
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_FAILED));
+        } else {
+            // Handle any other error codes.
+            mPurchasedItem = null;
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_FAILED));
+        }
     }
- }
+}

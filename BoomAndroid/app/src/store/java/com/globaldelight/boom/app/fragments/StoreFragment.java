@@ -32,10 +32,6 @@ import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.Utils;
 
-import static com.globaldelight.boom.business.inapp.InAppPurchase.SKU_INAPP_ITEM;
-import static com.globaldelight.boom.business.inapp.InAppPurchase.SKU_INAPP_ITEM_2;
-import static com.globaldelight.boom.business.inapp.InAppPurchase.SKU_INAPP_ITEM_3;
-
 /**
  * Created by Rahul Agarwal on 08-02-17.
  */
@@ -48,8 +44,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private Activity mActivity;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
     private ProgressBar progressBar;
-    private TextView mStoreShareTxt;
-    private Button mStoreBuyBtn;
+    private Button mStoreBuy6MonthBtn;
+    private Button mStoreBuy1YearBtn;
     private Button mClearButton;
     private boolean mUserPurchased = false; // to track if the user purchased
 
@@ -99,10 +95,11 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateInAppItemReceiver, intentFilter);
 
-        mStoreShareTxt = rootView.findViewById(R.id.store_share_text);
-        mStoreShareTxt.setOnClickListener(this);
-        mStoreBuyBtn = rootView.findViewById(R.id.store_buyButton);
-        mStoreBuyBtn.setOnClickListener(this);
+        mStoreBuy6MonthBtn = rootView.findViewById(R.id.store_buyButton_6month);
+        mStoreBuy6MonthBtn.setOnClickListener(this);
+
+        mStoreBuy1YearBtn = rootView.findViewById(R.id.store_buyButton_1year);
+        mStoreBuy1YearBtn.setOnClickListener(this);
 
         mClearButton = rootView.findViewById(R.id.store_clear_button);
         mClearButton.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +115,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         updateShareContent();
 
         if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
-            normalStoreUI(getCurrentPrice());
+            normalStoreUI();
             InAppPurchase.getInstance(getContext()).initInAppPurchase();
         }else{
             purchasedStoreUI();
@@ -144,22 +141,29 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private void purchasedStoreUI(){
         ((TextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
         ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
-        mStoreBuyBtn.setText(getResources().getString(R.string.after_purchase_buy_button));
-        mStoreShareTxt.setVisibility(View.GONE);
+        mStoreBuy6MonthBtn.setVisibility(View.GONE);
+        mStoreBuy1YearBtn.setVisibility(View.GONE);
         if ( !BuildConfig.FLAVOR.equals("production") ) {
             mClearButton.setVisibility(View.VISIBLE);
         }
     }
 
-    private void normalStoreUI(String price){
+    private void normalStoreUI(){
         ((TextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
         ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
         ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
 
-        if (null != price && price.length() > 0)
-            mStoreBuyBtn.setText(getResources().getString(R.string.buy_button) + " @ " + price);
+        String price6Month = InAppPurchase.getInstance(getContext()).getItemPrice(InAppPurchase.SKU_SUB_6MONTH);
+        if (null != price6Month && price6Month.length() > 0)
+            mStoreBuy6MonthBtn.setText(getResources().getString(R.string.buy_button) + " @ " + price6Month);
         else
-            mStoreBuyBtn.setText(getResources().getString(R.string.buy_button));
+            mStoreBuy6MonthBtn.setText(getResources().getString(R.string.buy_button));
+
+        String price1Year = InAppPurchase.getInstance(getContext()).getItemPrice(InAppPurchase.SKU_SUB_1YEAR);
+        if (null != price1Year && price1Year.length() > 0)
+            mStoreBuy1YearBtn.setText(getResources().getString(R.string.buy_button) + " @ " + price1Year);
+        else
+            mStoreBuy1YearBtn.setText(getResources().getString(R.string.buy_button));
 
         mClearButton.setVisibility(View.GONE);
 
@@ -168,14 +172,18 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.store_share_text:
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Share_Opened_from_Store);
-                new ShareDialog(getActivity()).show();
-                break;
-            case R.id.store_buyButton:
+            case R.id.store_buyButton_6month:
                 if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
                     if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
-                        startInAppFlow();
+                        InAppPurchase.getInstance(mContext).buyNow(getActivity(), InAppPurchase.SKU_SUB_6MONTH);
+                    }
+                }
+                break;
+
+            case R.id.store_buyButton_1year:
+                if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
+                    if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
+                        InAppPurchase.getInstance(mContext).buyNow(getActivity(), InAppPurchase.SKU_SUB_1YEAR);
                     }
                 }
                 break;
@@ -184,10 +192,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!InAppPurchase.getInstance(mContext).handleActivityResult(requestCode,
-                resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+
         if (requestCode == Utils.SHARE_COMPLETE) {
             updateShareContent();
         }
@@ -195,30 +200,12 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     private void updateShareContent() {
         if( InAppPurchase.getInstance(getContext()).isPurchased() ){
-            mStoreShareTxt.setVisibility(View.GONE);
         }else {
             ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_share_description);
-            mStoreShareTxt.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private String getCurrentInAppItem() {
-        GooglePlayStoreModel strategy = (GooglePlayStoreModel)BusinessModelFactory.getCurrentModel();
-        switch (strategy.getPurchaseLevel()) {
-            default:
-            case GooglePlayStoreModel.PRICE_FULL:
-                return SKU_INAPP_ITEM;
-            case GooglePlayStoreModel.PRICE_DISCOUNT:
-                return SKU_INAPP_ITEM_2;
-            case GooglePlayStoreModel.PRICE_DISCOUNT_2:
-                return SKU_INAPP_ITEM_3;
         }
     }
 
 
-    public void startInAppFlow() {
-        InAppPurchase.getInstance(mContext).buyNow(getActivity(), getCurrentInAppItem());
-    }
 
     @Override
     public void onDestroy() {
@@ -235,7 +222,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
 
     public void onErrorAppPurchase() {
-        normalStoreUI(getCurrentPrice());
+        normalStoreUI();
     }
 
     public void onSuccessAppPurchase() {
@@ -248,13 +235,4 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
     }
 
-    private String getCurrentPrice() {
-        String[] prices = InAppPurchase.getInstance(mContext).getPriceList();
-        if ( prices.length >= 3 ) {
-            GooglePlayStoreModel strategy = (GooglePlayStoreModel)BusinessModelFactory.getCurrentModel();
-            return prices[strategy.getPurchaseLevel()];
-        }
-
-        return "";
-    }
 }

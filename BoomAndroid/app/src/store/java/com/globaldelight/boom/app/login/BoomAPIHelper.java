@@ -129,9 +129,6 @@ public class BoomAPIHelper {
         });
     }
 
-
-
-
     private void storeToken(String accessToken) {
         SharedPreferences prefs = mContext.getSharedPreferences("com.globaldelight.boom", Context.MODE_PRIVATE);
         prefs.edit().putString("boom-access-token", accessToken).apply();
