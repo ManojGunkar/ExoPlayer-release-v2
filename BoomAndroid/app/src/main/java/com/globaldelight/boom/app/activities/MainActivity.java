@@ -31,6 +31,7 @@ import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
+import com.globaldelight.boom.spotify.activity.SpotifyActivity;
 import com.globaldelight.boom.tidal.ui.fragment.TidalLoginFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalMainFragment;
 import com.globaldelight.boom.tidal.utils.UserCredentials;
@@ -256,6 +257,10 @@ public class MainActivity extends MasterActivity
                 runnable = this::onNavigateToTidal;
                 break;
 
+            case R.id.spotify:
+                runnable=this::onNavigationToSpotify;
+                break;
+
             default:
                 BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -269,6 +274,10 @@ public class MainActivity extends MasterActivity
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void onNavigationToSpotify() {
+        startActivity(new Intent(this, SpotifyActivity.class));
     }
 
 

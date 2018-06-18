@@ -40,6 +40,12 @@
             android:checked="false"
             android:icon="@drawable/drawer_item_tidal_selector"
             android:title="@string/tidal" />
+        <item
+            android:id="@+id/spotify"
+            android:checkable="true"
+            android:checked="false"
+            android:icon="@drawable/drawer_item_tidal_selector"
+            android:title="@string/spotify" />
 
     </group>
     <group
