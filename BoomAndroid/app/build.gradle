@@ -183,6 +183,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:15.0.1'
     implementation "com.mixpanel.android:mixpanel-android:5.1.4"
 
+    implementation(name:'spotify-player-24-noconnect-2.20b', ext:'aar')
+    implementation 'com.spotify.android:auth:1.0.0-alpha'
+
     // Dependencies for store
     storeImplementation 'com.android.billingclient:billing:1.1'
     storeImplementation 'com.google.android.gms:play-services-ads:15.0.1'
