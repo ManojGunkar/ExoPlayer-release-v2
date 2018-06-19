@@ -30,7 +30,7 @@ import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
-import com.globaldelight.boom.spotify.activity.SpotifyMainFragment;
+import com.globaldelight.boom.spotify.ui.SpotifyLoginActivity;
 import com.globaldelight.boom.tidal.ui.fragment.TidalLoginFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalMainFragment;
 import com.globaldelight.boom.tidal.utils.UserCredentials;
@@ -276,7 +276,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigationToSpotify() {
-        Fragment fragment = new SpotifyMainFragment();
+        Fragment fragment = new SpotifyLoginActivity();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }

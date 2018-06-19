@@ -1,4 +1,4 @@
-package com.globaldelight.boom.spotify.fragment;
+package com.globaldelight.boom.spotify.ui.fragment;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -18,9 +18,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.spotify.activity.SpotifyMainFragment;
-import com.globaldelight.boom.spotify.adapter.ItemClickListener;
-import com.globaldelight.boom.spotify.adapter.SpotifyAlbumListAdapter;
+import com.globaldelight.boom.spotify.ui.SpotifyLoginActivity;
+import com.globaldelight.boom.spotify.ui.adapter.ItemClickListener;
+import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumListAdapter;
 import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
 import com.globaldelight.boom.spotify.pojo.AlbumPlaylist;
@@ -41,7 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.globaldelight.boom.spotify.activity.SpotifyMainFragment.CLIENT_ID;
+import static com.globaldelight.boom.spotify.ui.SpotifyLoginActivity.CLIENT_ID;
 
 /**
  * Created by Manoj Kumar on 10/24/2017.
@@ -87,8 +87,8 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
 
         View view = inflater.inflate(R.layout.spotify_album_fragment, container, false);
         recyclerView= view.findViewById(R.id.list_spotify_album);
-        token = getArguments().getString(SpotifyMainFragment.TOKEN);
-        albumId = getArguments().getString(SpotifyMainFragment.ALBUM_ID);
+        token = getArguments().getString(SpotifyLoginActivity.TOKEN);
+        albumId = getArguments().getString(SpotifyLoginActivity.ALBUM_ID);
         context = getActivity();
         dialog = new ProgressDialog(getActivity());
         dialog.setTitle("loading...");

@@ -1,4 +1,4 @@
-package com.globaldelight.boom.spotify.adapter;
+package com.globaldelight.boom.spotify.ui.adapter;
 
 import android.view.View;
 

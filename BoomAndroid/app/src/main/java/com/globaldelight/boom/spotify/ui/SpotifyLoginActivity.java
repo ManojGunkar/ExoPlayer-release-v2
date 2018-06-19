@@ -1,11 +1,12 @@
-package com.globaldelight.boom.spotify.activity;
+package com.globaldelight.boom.spotify.ui;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,11 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.spotify.adapter.SpotifyAlbumAdapter;
+import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumAdapter;
 import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
-import com.globaldelight.boom.spotify.fragment.SpotifyAlbumFragment;
 import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
+import com.globaldelight.boom.spotify.ui.fragment.SpotifyAlbumFragment;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -34,7 +35,7 @@ import retrofit2.Response;
  * Created by Manoj Kumar on 10/12/2017.
  */
 
-public class SpotifyMainFragment extends Fragment {
+public class SpotifyLoginActivity extends AppCompatActivity {
 
     public static final String TOKEN = "token";
     public static final String ALBUM_ID = "albumid";
@@ -46,6 +47,8 @@ public class SpotifyMainFragment extends Fragment {
     private static final int REQUEST_CODE = 1337;
     private static AuthenticationResponse response;
 
+    private Context context=this;
+
     private List<NewReleaseAlbums.Item> list;
     private SpotifyAlbumAdapter spotifyAlbumAdapter;
     private RecyclerView recyclerView;
@@ -54,26 +57,21 @@ public class SpotifyMainFragment extends Fragment {
         return "Bearer " + response.getAccessToken();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_spotify, container, false);
-        setHasOptionsMenu(true);
-        recyclerView = view.findViewById(R.id.grid_album_spotify);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_spotify_login);
+        recyclerView = findViewById(R.id.grid_album_spotify);
         openLoginWindow();
-       // loadData();
-        return view;
     }
 
     private void openLoginWindow() {
         final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
                 .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"})
                 .build();
-        Intent intent = AuthenticationClient.createLoginActivityIntent(getActivity(),request);
-        intent.getAction();
-        response=AuthenticationClient.getResponse(REQUEST_CODE,intent);
 
-        AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
+        AuthenticationClient.openLoginActivity(this,REQUEST_CODE,request);
+
     }
 
     @Override
@@ -97,7 +95,7 @@ public class SpotifyMainFragment extends Fragment {
     }
 
     private void loadData(){
-        ProgressDialog dialog = new ProgressDialog(getContext());
+        ProgressDialog dialog = new ProgressDialog(this);
         dialog.setTitle("loading...");
         dialog.setCancelable(false);
         dialog.show();
@@ -112,9 +110,9 @@ public class SpotifyMainFragment extends Fragment {
                     dialog.dismiss();
                     NewReleaseAlbums album = response.body();
                     list = album.getAlbums().getItems();
-                    Toast.makeText(getContext(), response.message(), Toast.LENGTH_SHORT).show();
-                    recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-                    spotifyAlbumAdapter = new SpotifyAlbumAdapter(getContext(), list);
+                    Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
+                    recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+                    spotifyAlbumAdapter = new SpotifyAlbumAdapter(context, list);
                     recyclerView.setAdapter(spotifyAlbumAdapter);
                 } else {
                     dialog.dismiss();
