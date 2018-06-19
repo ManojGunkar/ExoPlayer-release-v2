@@ -234,16 +234,6 @@
                 android:value=".app.activities.MainActivity" />
         </activity>
 
-        //F:\1JanCheckoutBoom\BoomAndroid\app\src\main\java\com\globaldelight\boom\spotify\activity\SpotifyActivity.java
-
-        <activity
-            android:name=".spotify.activity.SpotifyActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".app.activities.MainActivity" />
-        </activity>
-
         <receiver
             android:name=".app.analytics.GCMHelper"
             android:permission="com.google.android.c2dm.permission.SEND">
