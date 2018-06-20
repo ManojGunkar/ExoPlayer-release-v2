@@ -41,7 +41,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.globaldelight.boom.spotify.ui.SpotifyLoginActivity.CLIENT_ID;
+import static com.globaldelight.boom.spotify.utils.Helper.ALBUM_ID;
+import static com.globaldelight.boom.spotify.utils.Helper.CLIENT_ID;
+import static com.globaldelight.boom.spotify.utils.Helper.TOKEN;
 
 /**
  * Created by Manoj Kumar on 10/24/2017.
@@ -87,8 +89,8 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
 
         View view = inflater.inflate(R.layout.spotify_album_fragment, container, false);
         recyclerView= view.findViewById(R.id.list_spotify_album);
-        token = getArguments().getString(SpotifyLoginActivity.TOKEN);
-        albumId = getArguments().getString(SpotifyLoginActivity.ALBUM_ID);
+        token = getArguments().getString(TOKEN);
+        albumId = getArguments().getString(ALBUM_ID);
         context = getActivity();
         dialog = new ProgressDialog(getActivity());
         dialog.setTitle("loading...");

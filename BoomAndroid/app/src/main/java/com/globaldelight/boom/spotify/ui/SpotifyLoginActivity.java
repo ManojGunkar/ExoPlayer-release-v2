@@ -4,22 +4,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumAdapter;
 import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
 import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
+import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumAdapter;
 import com.globaldelight.boom.spotify.ui.fragment.SpotifyAlbumFragment;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -31,23 +28,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.globaldelight.boom.spotify.utils.Helper.CLIENT_ID;
+import static com.globaldelight.boom.spotify.utils.Helper.REDIRECT_URI;
+import static com.globaldelight.boom.spotify.utils.Helper.SCOPES;
+import static com.globaldelight.boom.spotify.utils.Helper.TOKEN;
+
 /**
  * Created by Manoj Kumar on 10/12/2017.
  */
 
 public class SpotifyLoginActivity extends AppCompatActivity {
 
-    public static final String TOKEN = "token";
-    public static final String ALBUM_ID = "albumid";
-    public static final String CLIENT_ID = "0fd566b3d5d249eb83acbc3fa6cb3235";
     private static final String TAG = SpotifyApiUrls.SPOTIFY_TAG;
-    private static final String CLIENT_SECRET = "5947157861f44103a9b62b9d0bdb84d1";
-    private static final String REDIRECT_URI = "spotify://callback";
-
     private static final int REQUEST_CODE = 1337;
     private static AuthenticationResponse response;
 
-    private Context context=this;
+    private Context context = this;
 
     private List<NewReleaseAlbums.Item> list;
     private SpotifyAlbumAdapter spotifyAlbumAdapter;
@@ -62,15 +58,25 @@ public class SpotifyLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spotify_login);
         recyclerView = findViewById(R.id.grid_album_spotify);
+        Toolbar toolbar = findViewById(R.id.toolbar_spotify_login);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         openLoginWindow();
+    }
+
+    private void logOut(){
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
+                        .setShowDialog(true)
+                        .setScopes(SCOPES);
+        AuthenticationRequest request=builder.build();
     }
 
     private void openLoginWindow() {
         final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
-                .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"})
+                .setScopes(SCOPES)
                 .build();
 
-        AuthenticationClient.openLoginActivity(this,REQUEST_CODE,request);
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
 
     }
 
@@ -84,7 +90,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
 
             switch (response.getType()) {
                 case TOKEN:
-                   loadData();
+                    loadData();
                     break;
 
                 case ERROR:
@@ -94,7 +100,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
         }
     }
 
-    private void loadData(){
+    private void loadData() {
         ProgressDialog dialog = new ProgressDialog(this);
         dialog.setTitle("loading...");
         dialog.setCancelable(false);
@@ -132,7 +138,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putString(TOKEN, response.getAccessToken());
-        // bundle.putString(ALBUM_ID, list.get(position).getId());
+        //  bundle.putString(ALBUM_ID, list.get(position).getId());
         SpotifyAlbumFragment albumFragment = new SpotifyAlbumFragment();
         albumFragment.setArguments(bundle);
 
