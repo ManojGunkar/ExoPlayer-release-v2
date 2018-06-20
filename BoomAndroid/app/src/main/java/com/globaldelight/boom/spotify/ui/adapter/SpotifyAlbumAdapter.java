@@ -1,6 +1,7 @@
 package com.globaldelight.boom.spotify.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
+import com.globaldelight.boom.spotify.ui.SpotifyAlbumActivity;
 
 import java.util.List;
+
+import static com.globaldelight.boom.spotify.utils.Helper.TOKEN;
 
 /**
  * Created by Manoj Kumar on 10/26/2017.
@@ -22,12 +26,11 @@ public class SpotifyAlbumAdapter extends RecyclerView.Adapter<SpotifyAlbumAdapte
 
     private Context context;
     private List<NewReleaseAlbums.Item> list;
+    private String token;
 
-    private ItemClickListener mClickListener;
 
-
-    public SpotifyAlbumAdapter(Context context, List<NewReleaseAlbums.Item> albumsList) {
-
+    public SpotifyAlbumAdapter(Context context, List<NewReleaseAlbums.Item> albumsList,String accessToken) {
+        this.token=accessToken;
         this.list = albumsList;
         this.context = context;
     }
@@ -47,6 +50,12 @@ public class SpotifyAlbumAdapter extends RecyclerView.Adapter<SpotifyAlbumAdapte
                     .load(list.get(position).getImages().get(0).getUrl())
                     .into(holder.imgAlbumThumb);
 
+            holder.itemView.setOnClickListener(v->{
+                Intent intent=new Intent(context,SpotifyAlbumActivity.class);
+                intent.putExtra(TOKEN, token);
+                context.startActivity(intent);
+            });
+
         } else {
             holder.imgAlbumThumb.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_no_music_placeholder));
         }
@@ -58,7 +67,7 @@ public class SpotifyAlbumAdapter extends RecyclerView.Adapter<SpotifyAlbumAdapte
         return list.size();
     }
 
-   class AlbumViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+   class AlbumViewHolder extends RecyclerView.ViewHolder{
         ImageView imgAlbumThumb;
         TextView txtAlbumTitle;
 
@@ -66,17 +75,8 @@ public class SpotifyAlbumAdapter extends RecyclerView.Adapter<SpotifyAlbumAdapte
             super(itemView);
             imgAlbumThumb =  itemView.findViewById(R.id.img_album_thumb_spotify);
             txtAlbumTitle =  itemView.findViewById(R.id.txt_album_title_spotify);
-            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            if ( mClickListener != null) mClickListener.onItemClick(v, getAdapterPosition());
-        }
-    }
-
-    public void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
     }
 
 }

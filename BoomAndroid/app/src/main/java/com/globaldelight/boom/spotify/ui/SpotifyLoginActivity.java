@@ -17,7 +17,6 @@ import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
 import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
 import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumAdapter;
-import com.globaldelight.boom.spotify.ui.fragment.SpotifyAlbumFragment;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -31,7 +30,6 @@ import retrofit2.Response;
 import static com.globaldelight.boom.spotify.utils.Helper.CLIENT_ID;
 import static com.globaldelight.boom.spotify.utils.Helper.REDIRECT_URI;
 import static com.globaldelight.boom.spotify.utils.Helper.SCOPES;
-import static com.globaldelight.boom.spotify.utils.Helper.TOKEN;
 
 /**
  * Created by Manoj Kumar on 10/12/2017.
@@ -48,6 +46,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
     private List<NewReleaseAlbums.Item> list;
     private SpotifyAlbumAdapter spotifyAlbumAdapter;
     private RecyclerView recyclerView;
+    private String token;
 
     public static String getToken() {
         return "Bearer " + response.getAccessToken();
@@ -86,6 +85,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_CODE) {
             response = AuthenticationClient.getResponse(resultCode, intent);
+            token=response.getAccessToken();
             Log.d(TAG, "Token:-" + response.getAccessToken());
 
             switch (response.getType()) {
@@ -118,7 +118,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
                     list = album.getAlbums().getItems();
                     Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
                     recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-                    spotifyAlbumAdapter = new SpotifyAlbumAdapter(context, list);
+                    spotifyAlbumAdapter = new SpotifyAlbumAdapter(context, list,token);
                     recyclerView.setAdapter(spotifyAlbumAdapter);
                 } else {
                     dialog.dismiss();
@@ -133,17 +133,5 @@ public class SpotifyLoginActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void jumpToTrack() {
-
-        Bundle bundle = new Bundle();
-        bundle.putString(TOKEN, response.getAccessToken());
-        //  bundle.putString(ALBUM_ID, list.get(position).getId());
-        SpotifyAlbumFragment albumFragment = new SpotifyAlbumFragment();
-        albumFragment.setArguments(bundle);
-
-
-    }
-
 
 }

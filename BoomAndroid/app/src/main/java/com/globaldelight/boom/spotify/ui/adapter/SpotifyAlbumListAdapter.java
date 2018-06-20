@@ -21,8 +21,6 @@ public class SpotifyAlbumListAdapter extends RecyclerView.Adapter<SpotifyAlbumLi
     private Context context;
     private List<AlbumPlaylist.Item> list;
 
-    private ItemClickListener mClickListener;
-
 
     public SpotifyAlbumListAdapter(Context context, List<AlbumPlaylist.Item> albumsList) {
 
@@ -50,26 +48,17 @@ public class SpotifyAlbumListAdapter extends RecyclerView.Adapter<SpotifyAlbumLi
         return list.size();
     }
 
-   class AlbumViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class AlbumViewHolder extends RecyclerView.ViewHolder {
         TextView txtTrackId;
         TextView txtTrackTitle;
 
         public AlbumViewHolder(View itemView) {
             super(itemView);
-
-            txtTrackTitle =  itemView.findViewById(R.id.txt_track_title_spotify);
-            txtTrackId =  itemView.findViewById(R.id.txt_track_id_spotify);
-            itemView.setOnClickListener(this);
+            txtTrackTitle = itemView.findViewById(R.id.txt_track_title_spotify);
+            txtTrackId = itemView.findViewById(R.id.txt_track_id_spotify);
         }
 
-        @Override
-        public void onClick(View v) {
-            if ( mClickListener != null) mClickListener.onItemClick(v, getAdapterPosition());
-        }
     }
 
-    public void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }
 
 }

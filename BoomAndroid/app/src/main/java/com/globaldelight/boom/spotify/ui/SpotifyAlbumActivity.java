@@ -1,4 +1,4 @@
-package com.globaldelight.boom.spotify.ui.fragment;
+package com.globaldelight.boom.spotify.ui;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -8,22 +8,20 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.spotify.ui.SpotifyLoginActivity;
-import com.globaldelight.boom.spotify.ui.adapter.ItemClickListener;
-import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumListAdapter;
+import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
 import com.globaldelight.boom.spotify.pojo.AlbumPlaylist;
+import com.globaldelight.boom.spotify.ui.adapter.ItemClickListener;
+import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumListAdapter;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Connectivity;
@@ -49,27 +47,10 @@ import static com.globaldelight.boom.spotify.utils.Helper.TOKEN;
  * Created by Manoj Kumar on 10/24/2017.
  */
 
-public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
+public class SpotifyAlbumActivity extends MasterActivity implements ItemClickListener,
         Player.NotificationCallback, ConnectionStateCallback {
 
     private static final String TAG = SpotifyApiUrls.SPOTIFY_TAG;
-
-    private RecyclerView recyclerView;
-    private SpotifyAlbumListAdapter spotifyAlbumListAdapter;
-    private ProgressDialog dialog;
-
-    private Context context;
-
-    private String token;
-    private String albumId;
-    private String uri;
-    private List<AlbumPlaylist.Item> list;
-
-    private SpotifyPlayer spotifyPlayer;
-    private Metadata metadata;
-    private PlaybackState currentPlaybackState;
-    private BroadcastReceiver networkStateReceiver;
-
     private final Player.OperationCallback operationCallback = new Player.OperationCallback() {
         @Override
         public void onSuccess() {
@@ -78,25 +59,35 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
 
         @Override
         public void onError(Error error) {
-            Log.d(TAG, "error:-"+error.name());
+            Log.d(TAG, "error:-" + error.name());
         }
     };
-
+    private RecyclerView recyclerView;
+    private SpotifyAlbumListAdapter spotifyAlbumListAdapter;
+    private ProgressDialog dialog;
+    private Context context;
+    private String token;
+    private String albumId;
+    private String uri;
+    private List<AlbumPlaylist.Item> list;
+    private SpotifyPlayer spotifyPlayer;
+    private Metadata metadata;
+    private PlaybackState currentPlaybackState;
+    private BroadcastReceiver networkStateReceiver;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_spotify_album);
+        recyclerView = findViewById(R.id.rv_spotify);
+        Bundle bundle = getIntent().getExtras();
+        token = bundle.getString(TOKEN);
+        albumId = bundle.getString(ALBUM_ID);
 
-        View view = inflater.inflate(R.layout.spotify_album_fragment, container, false);
-        recyclerView= view.findViewById(R.id.list_spotify_album);
-        token = getArguments().getString(TOKEN);
-        albumId = getArguments().getString(ALBUM_ID);
-        context = getActivity();
-        dialog = new ProgressDialog(getActivity());
-        dialog.setTitle("loading...");
-        dialog.setCancelable(false);
-        dialog.show();
+        call();
+    }
 
+    private void call() {
         ApiRequestController.RequestCallback requestCallback = ApiRequestController.getClient();
         Call<AlbumPlaylist> call = requestCallback.getAlbumPlayList(albumId, "Bearer " + token);
         call.enqueue(new Callback<AlbumPlaylist>() {
@@ -110,7 +101,6 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
                     Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
                     recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     spotifyAlbumListAdapter = new SpotifyAlbumListAdapter(context, list);
-                    spotifyAlbumListAdapter.setClickListener(SpotifyAlbumFragment.this);
                     recyclerView.setAdapter(spotifyAlbumListAdapter);
 
                 } else {
@@ -127,8 +117,6 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
         });
 
         initSpotifyPlayer();
-
-        return view;
     }
 
     private void initSpotifyPlayer() {
@@ -138,9 +126,9 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
             spotifyPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
                 @Override
                 public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                    spotifyPlayer.setConnectivityStatus(operationCallback, getNetworkConnectivity(context));
-                    spotifyPlayer.addNotificationCallback(SpotifyAlbumFragment.this);
-                    spotifyPlayer.addConnectionStateCallback(SpotifyAlbumFragment.this);
+                    spotifyPlayer.setConnectivityStatus(operationCallback, getNetworkConnectivity());
+                    spotifyPlayer.addNotificationCallback(SpotifyAlbumActivity.this);
+                    spotifyPlayer.addConnectionStateCallback(SpotifyAlbumActivity.this);
                 }
 
                 @Override
@@ -153,9 +141,9 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
         }
     }
 
-    private Connectivity getNetworkConnectivity(Context context) {
+    private Connectivity getNetworkConnectivity() {
         ConnectivityManager connectivityManager;
-        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnected()) {
             return Connectivity.fromNetworkType(activeNetwork.getType());
@@ -167,7 +155,7 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
 
     @Override
     public void onItemClick(View view, int position) {
-        uri=list.get(position).getUri();
+        uri = list.get(position).getUri();
         Toast.makeText(context, uri, Toast.LENGTH_SHORT).show();
         spotifyPlayer.playUri(operationCallback, uri, 0, 0);
     }
@@ -220,7 +208,7 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (spotifyPlayer != null) {
-                    Connectivity connectivity = getNetworkConnectivity(getActivity());
+                    Connectivity connectivity = getNetworkConnectivity();
                     Log.d(TAG, "Network state changed: " + connectivity.toString());
                     spotifyPlayer.setConnectivityStatus(operationCallback, connectivity);
                 }
@@ -231,8 +219,8 @@ public class SpotifyAlbumFragment extends Fragment implements ItemClickListener,
         context.registerReceiver(networkStateReceiver, filter);
 
         if (spotifyPlayer != null) {
-            spotifyPlayer.addNotificationCallback(SpotifyAlbumFragment.this);
-            spotifyPlayer.addConnectionStateCallback(SpotifyAlbumFragment.this);
+            spotifyPlayer.addNotificationCallback(SpotifyAlbumActivity.this);
+            spotifyPlayer.addConnectionStateCallback(SpotifyAlbumActivity.this);
         }
     }
 }
