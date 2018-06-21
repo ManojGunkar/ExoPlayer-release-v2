@@ -60,13 +60,6 @@
             android:name="io.fabric.ApiKey"
             android:value="2e9ac4a0d1804747ddcb10dcbcea0f8f63ba1c23" />
 
-
-        <!-- Content Provider to query sqlite database -->
-        <!--
-     ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
-        -->
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

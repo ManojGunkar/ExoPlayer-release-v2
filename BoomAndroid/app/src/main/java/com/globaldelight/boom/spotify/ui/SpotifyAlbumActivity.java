@@ -1,6 +1,5 @@
 package com.globaldelight.boom.spotify.ui;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
@@ -64,8 +62,6 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
     };
     private RecyclerView recyclerView;
     private SpotifyAlbumListAdapter spotifyAlbumListAdapter;
-    private ProgressDialog dialog;
-    private Context context;
     private String token;
     private String albumId;
     private String uri;
@@ -95,23 +91,20 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
             public void onResponse(Call<AlbumPlaylist> call, Response<AlbumPlaylist> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "success" + response.message());
-                    dialog.dismiss();
                     AlbumPlaylist album = response.body();
                     list = album.getTracks().getItems();
-                    Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
-                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    spotifyAlbumListAdapter = new SpotifyAlbumListAdapter(context, list);
+
+                    recyclerView.setLayoutManager(new LinearLayoutManager(SpotifyAlbumActivity.this));
+                    spotifyAlbumListAdapter = new SpotifyAlbumListAdapter(SpotifyAlbumActivity.this, list);
                     recyclerView.setAdapter(spotifyAlbumListAdapter);
 
                 } else {
-                    dialog.dismiss();
                     Log.d(TAG, "fail," + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<AlbumPlaylist> call, Throwable t) {
-                dialog.dismiss();
                 Log.d(TAG, "GotError: " + t.getMessage());
             }
         });
@@ -121,7 +114,7 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
 
     private void initSpotifyPlayer() {
         if (spotifyPlayer == null) {
-            Config playerConfig = new Config(context, token, CLIENT_ID);
+            Config playerConfig = new Config(this, token, CLIENT_ID);
 
             spotifyPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
                 @Override
@@ -156,7 +149,6 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
     @Override
     public void onItemClick(View view, int position) {
         uri = list.get(position).getUri();
-        Toast.makeText(context, uri, Toast.LENGTH_SHORT).show();
         spotifyPlayer.playUri(operationCallback, uri, 0, 0);
     }
 
@@ -216,7 +208,7 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
         };
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        context.registerReceiver(networkStateReceiver, filter);
+        registerReceiver(networkStateReceiver, filter);
 
         if (spotifyPlayer != null) {
             spotifyPlayer.addNotificationCallback(SpotifyAlbumActivity.this);

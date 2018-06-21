@@ -16,6 +16,7 @@ import com.globaldelight.boom.spotify.ui.SpotifyAlbumActivity;
 
 import java.util.List;
 
+import static com.globaldelight.boom.spotify.utils.Helper.ALBUM_ID;
 import static com.globaldelight.boom.spotify.utils.Helper.TOKEN;
 
 /**
@@ -53,6 +54,7 @@ public class SpotifyAlbumAdapter extends RecyclerView.Adapter<SpotifyAlbumAdapte
             holder.itemView.setOnClickListener(v->{
                 Intent intent=new Intent(context,SpotifyAlbumActivity.class);
                 intent.putExtra(TOKEN, token);
+                intent.putExtra(ALBUM_ID, list.get(position).getId());
                 context.startActivity(intent);
             });
 
