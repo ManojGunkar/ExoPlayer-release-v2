@@ -18,42 +18,43 @@ import com.globaldelight.boom.radio.ui.fragments.PopularFragment;
  */
 public class RadioFragmentStateAdapter extends FragmentStatePagerAdapter {
 
-    private String mTabTitle[] = new String[]{"Local", "Favourite", "Country","Popular","Explore"};
+    public static final String KEY_TYPE = "KEY_TYPE";
+    private String mTabTitle[] = new String[]{"Local", "Favourite", "Country", "Popular", "Explore"};
     private String mType;
-    public static final String KEY_TYPE="KEY_TYPE";
 
-    public RadioFragmentStateAdapter(FragmentManager fm,String type) {
+    public RadioFragmentStateAdapter(FragmentManager fm, String type) {
         super(fm);
-        this.mType=type;
+        this.mType = type;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment=null;
-        Bundle bundle=new Bundle();
-        bundle.putString(KEY_TYPE,mType);
+        Fragment fragment = null;
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_TYPE, mType);
 
-        switch (position){
+        switch (position) {
             case 0:
-                fragment= new LocalFragment();
+                fragment = new LocalFragment();
                 fragment.setArguments(bundle);
                 return fragment;
             case 1:
-                fragment= new FavouriteFragment();
+                fragment = new FavouriteFragment();
                 fragment.setArguments(bundle);
                 return fragment;
             case 2:
-                fragment= new CountryFragment();
+                fragment = new CountryFragment();
                 fragment.setArguments(bundle);
                 return fragment;
             case 3:
-                fragment= new PopularFragment();
+                fragment = new PopularFragment();
                 fragment.setArguments(bundle);
                 return fragment;
             case 4:
-                fragment= new ExploreFragment();
+                fragment = new ExploreFragment();
                 fragment.setArguments(bundle);
                 return fragment;
+
 
         }
         return null;
@@ -67,6 +68,8 @@ public class RadioFragmentStateAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
+        if (mType.equalsIgnoreCase("podcast"))
+            return 4;
         return 5;
     }
 }

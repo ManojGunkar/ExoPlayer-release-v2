@@ -43,8 +43,6 @@ import junit.framework.Assert;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -258,7 +256,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
     }
 
-    private int getGenereId(String genreName) {
+    private int getGenreId(String genreName) {
         if ( genreName == null ) {
             return Constants.EQ.MUSIC;
         }
@@ -278,7 +276,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
 
     private void setGenreType(String genreType) {
-        int genreId = getGenereId(genreType);
+        int genreId = getGenreId(genreType);
         AudioEffect.getInstance(mContext).setAutoEqualizerPosition(genreId);
         Log.d(TAG, "Song Genre: " + genreType + " Equalizer: " + genreId);
     }
@@ -286,11 +284,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     private void postError() {
         if (mCallback != null) {
-            handler.post(new Runnable() {
-                @Override public void run() {
-                    mCallback.onError();
-                }
-            });
+            handler.post(() -> mCallback.onError());
         }
     }
 
@@ -303,21 +297,12 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     private void postStateChange() {
         if (mCallback != null) {
-            handler.post(new Runnable() {
-                @Override public void run() {
-                    mCallback.onStateChange(state);
-                }
-            });
+            handler.post(() -> mCallback.onStateChange(state));
         }
     }
 
     private void postOnFinish() {
-        if (mCallback != null) handler.post(new Runnable() {
-            @Override
-            public void run() {
-                mCallback.onComplete();
-            }
-        });
+        if (mCallback != null) handler.post(() -> mCallback.onComplete());
     }
 
     public void updatePlayerEffect(){

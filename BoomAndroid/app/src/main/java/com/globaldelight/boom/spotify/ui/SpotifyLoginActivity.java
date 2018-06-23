@@ -63,11 +63,11 @@ public class SpotifyLoginActivity extends AppCompatActivity {
         openLoginWindow();
     }
 
-    private void logOut(){
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
-                        .setShowDialog(true)
-                        .setScopes(SCOPES);
-        AuthenticationRequest request=builder.build();
+    private void logOut() {
+        AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
+                .setShowDialog(true)
+                .setScopes(SCOPES)
+                .build();
     }
 
     private void openLoginWindow() {
@@ -86,7 +86,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_CODE) {
             response = AuthenticationClient.getResponse(resultCode, intent);
-            token=response.getAccessToken();
+            token = response.getAccessToken();
             Log.d(TAG, "Token:-" + response.getAccessToken());
 
             switch (response.getType()) {
@@ -119,7 +119,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
                     list = album.getAlbums().getItems();
                     Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
                     recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-                    spotifyAlbumAdapter = new SpotifyAlbumAdapter(context, list,token);
+                    spotifyAlbumAdapter = new SpotifyAlbumAdapter(context, list, token);
                     recyclerView.setAdapter(spotifyAlbumAdapter);
                 } else {
                     dialog.dismiss();
