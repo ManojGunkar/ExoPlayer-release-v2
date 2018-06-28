@@ -73,7 +73,6 @@ public class SpotifyLoginActivity extends AppCompatActivity {
     private void openLoginWindow() {
         final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
                 .setScopes(SCOPES)
-                .setShowDialog(true)
                 .build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
