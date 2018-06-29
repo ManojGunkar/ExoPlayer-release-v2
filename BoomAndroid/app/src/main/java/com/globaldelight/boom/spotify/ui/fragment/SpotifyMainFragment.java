@@ -29,6 +29,7 @@ public class SpotifyMainFragment extends TabBarFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spotify_main, container, false);
         getActivity().startActivity(new Intent(getContext(), SpotifyLoginActivity.class));
+        setHasOptionsMenu(true);
         initComp(view);
         return view;
     }

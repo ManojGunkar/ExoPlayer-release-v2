@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.tidal.ui.ContentLoadable;
+import com.globaldelight.boom.spotify.utils.SpotifyLoginHandler;
 import com.globaldelight.boom.utils.RequestChain;
 import com.globaldelight.boom.utils.Result;
 
@@ -23,7 +23,7 @@ import com.globaldelight.boom.utils.Result;
  * Created by Manoj Kumar on 29-06-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class SpotifyLatestFragment extends Fragment implements ContentLoadable {
+public class SpotifyLatestFragment extends Fragment implements SpotifyLoginHandler {
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
@@ -52,18 +52,17 @@ public class SpotifyLatestFragment extends Fragment implements ContentLoadable {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    @Override
-    public void resetContent() {
+    private void loadData(String token) {
 
     }
 
     @Override
-    public void onLoadContent() {
-
+    public void onSuccessLoggedIn(String token) {
+        loadData(token);
     }
 
     @Override
-    public void onStopLoading() {
+    public void onLogout() {
 
     }
 }

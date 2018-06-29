@@ -55,11 +55,11 @@ public class SpotifyLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spotify_login);
+      /*  setContentView(R.layout.activity_spotify_login);
         recyclerView = findViewById(R.id.grid_album_spotify);
         Toolbar toolbar = findViewById(R.id.toolbar_spotify_login);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
         openLoginWindow();
     }
 
@@ -90,6 +90,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
 
             switch (response.getType()) {
                 case TOKEN:
+                    finish();
                     break;
 
                 case ERROR:

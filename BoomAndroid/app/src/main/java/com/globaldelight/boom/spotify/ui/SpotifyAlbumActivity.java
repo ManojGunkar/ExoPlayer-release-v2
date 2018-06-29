@@ -38,7 +38,7 @@ import static com.globaldelight.boom.spotify.utils.Helper.TOKEN;
  * Created by Manoj Kumar on 10/24/2017.
  */
 
-public class SpotifyAlbumActivity extends MasterActivity implements ItemClickListener,
+public class SpotifyAlbumActivity extends MasterActivity implements
         Player.NotificationCallback, ConnectionStateCallback {
 
     private static final String TAG = SpotifyApiUrls.SPOTIFY_TAG;
@@ -139,11 +139,11 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
     }
 
 
-    @Override
+  /*  @Override
     public void onItemClick(View view, int position) {
         uri = list.get(position).getUri();
         spotifyPlayer.playUri(operationCallback, uri, 0, 0);
-    }
+    }*/
 
     @Override
     public void onLoggedIn() {
