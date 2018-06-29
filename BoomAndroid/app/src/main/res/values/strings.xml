@@ -279,5 +279,8 @@
     <string name="chapters">Chapters: %d</string>
     <string name="boom_login">Boom Login</string>
     <string name="spotify">Spotify</string>
+    <string name="spotify_new_tab">Latest</string>
+    <string name="spotify_curated_tab">Curated</string>
+    <string name="spotify_mymusic_tab">MyMusic</string>
 
 </resources>

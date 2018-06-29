@@ -90,7 +90,6 @@ public class SpotifyLoginActivity extends AppCompatActivity {
 
             switch (response.getType()) {
                 case TOKEN:
-                    loadData();
                     break;
 
                 case ERROR:
@@ -100,38 +99,6 @@ public class SpotifyLoginActivity extends AppCompatActivity {
         }
     }
 
-    private void loadData() {
-        ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setTitle("loading...");
-        dialog.setCancelable(false);
-        dialog.show();
-        ApiRequestController.RequestCallback requestCallback = ApiRequestController.getClient();
-        Call<NewReleaseAlbums> call = requestCallback.getSpotifyAlbum("Bearer " + response.getAccessToken());
 
-        call.enqueue(new Callback<NewReleaseAlbums>() {
-            @Override
-            public void onResponse(Call<NewReleaseAlbums> call, Response<NewReleaseAlbums> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "success");
-                    dialog.dismiss();
-                    NewReleaseAlbums album = response.body();
-                    list = album.getAlbums().getItems();
-                    Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
-                    recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
-                    spotifyAlbumAdapter = new SpotifyAlbumAdapter(context, list, token);
-                    recyclerView.setAdapter(spotifyAlbumAdapter);
-                } else {
-                    dialog.dismiss();
-                    Log.d(TAG, "Error");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<NewReleaseAlbums> call, Throwable t) {
-                dialog.dismiss();
-                Log.d(TAG, "Error-" + t.getMessage());
-            }
-        });
-    }
 
 }

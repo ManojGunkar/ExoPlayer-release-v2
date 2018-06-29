@@ -2,8 +2,6 @@ package com.globaldelight.boom.spotify.apiconnector;
 
 import android.content.Context;
 
-import com.globaldelight.boom.utils.Result;
-
 import retrofit2.Call;
 
 /**

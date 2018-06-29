@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_height="wrap_content" />
 
-    <include layout="@layout/tidal_error_layout"
+    <include layout="@layout/error_layout"
         android:id="@+id/layout_error"
         android:visibility="gone"/>
 

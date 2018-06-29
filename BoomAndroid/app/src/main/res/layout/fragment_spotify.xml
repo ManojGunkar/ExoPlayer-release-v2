@@ -5,23 +5,21 @@
     android:background="@color/app_background"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_tidal_my_music"
-        android:layout_width="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_height="match_parent" />
-
-
     <ProgressBar
-        android:id="@+id/progress_tidal_my_music"
+        android:id="@+id/progress_spotify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="visible" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_spotify"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content" />
+
     <include layout="@layout/error_layout"
         android:id="@+id/layout_error"
         android:visibility="gone"/>
-
 
 </RelativeLayout>

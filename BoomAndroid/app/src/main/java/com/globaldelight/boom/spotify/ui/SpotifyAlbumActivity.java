@@ -8,17 +8,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
-import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
 import com.globaldelight.boom.spotify.apiconnector.pojo.AlbumPlaylist;
-import com.globaldelight.boom.spotify.ui.adapter.ItemClickListener;
 import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumListAdapter;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
@@ -32,10 +29,6 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.globaldelight.boom.spotify.utils.Helper.ALBUM_ID;
 import static com.globaldelight.boom.spotify.utils.Helper.CLIENT_ID;
@@ -84,7 +77,7 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
     }
 
     private void call() {
-        ApiRequestController.RequestCallback requestCallback = ApiRequestController.getClient();
+        /*ApiRequestController.RequestCallback requestCallback = ApiRequestController.getClient();
         Call<AlbumPlaylist> call = requestCallback.getAlbumPlayList(albumId, "Bearer " + token);
         call.enqueue(new Callback<AlbumPlaylist>() {
             @Override
@@ -108,7 +101,7 @@ public class SpotifyAlbumActivity extends MasterActivity implements ItemClickLis
                 Log.d(TAG, "GotError: " + t.getMessage());
             }
         });
-
+*/
         initSpotifyPlayer();
     }
 
