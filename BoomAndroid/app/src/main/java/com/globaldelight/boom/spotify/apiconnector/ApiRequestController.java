@@ -1,7 +1,7 @@
 package com.globaldelight.boom.spotify.apiconnector;
 
-import com.globaldelight.boom.spotify.pojo.AlbumPlaylist;
-import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
+import com.globaldelight.boom.spotify.apiconnector.pojo.AlbumPlaylist;
+import com.globaldelight.boom.spotify.apiconnector.pojo.NewReleaseAlbums;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,14 +53,10 @@ public class ApiRequestController {
 
     public interface RequestCallback {
 
-        @GET(SpotifyApiUrls.BROWSE_RELEASE_ALBUM_URL)
-        Call<NewReleaseAlbums> getSpotifyAlbum(@Header("Authorization") String authToken);
-
-
-        @GET(SpotifyApiUrls.ALBUM_LIST_URL)
-        Call<AlbumPlaylist> getAlbumPlayList(
-                @Path("albumId") String albumId,
-                @Header("authorization") String authToken);
+        @GET("{path}")
+        <T> Call<T> getSpotifyResponse(
+                @Path(value = "path", encoded = true) String path,
+                @Header("Authorization") String authToken);
 
     }
 

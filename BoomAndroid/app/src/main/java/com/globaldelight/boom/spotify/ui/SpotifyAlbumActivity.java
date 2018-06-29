@@ -17,7 +17,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
-import com.globaldelight.boom.spotify.pojo.AlbumPlaylist;
+import com.globaldelight.boom.spotify.apiconnector.pojo.AlbumPlaylist;
 import com.globaldelight.boom.spotify.ui.adapter.ItemClickListener;
 import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumListAdapter;
 import com.spotify.sdk.android.player.Config;

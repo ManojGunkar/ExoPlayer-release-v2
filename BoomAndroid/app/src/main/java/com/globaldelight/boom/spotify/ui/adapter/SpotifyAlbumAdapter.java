@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
+import com.globaldelight.boom.spotify.apiconnector.pojo.NewReleaseAlbums;
 import com.globaldelight.boom.spotify.ui.SpotifyAlbumActivity;
 
 import java.util.List;

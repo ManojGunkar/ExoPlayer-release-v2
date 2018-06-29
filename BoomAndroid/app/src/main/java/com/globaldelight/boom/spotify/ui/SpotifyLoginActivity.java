@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
 import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
-import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
+import com.globaldelight.boom.spotify.apiconnector.pojo.NewReleaseAlbums;
 import com.globaldelight.boom.spotify.ui.adapter.SpotifyAlbumAdapter;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;

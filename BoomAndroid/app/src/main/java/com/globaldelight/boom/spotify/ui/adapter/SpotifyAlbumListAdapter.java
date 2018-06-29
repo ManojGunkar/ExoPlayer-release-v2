@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.spotify.pojo.AlbumPlaylist;
+import com.globaldelight.boom.spotify.apiconnector.pojo.AlbumPlaylist;
 
 import java.util.List;
 

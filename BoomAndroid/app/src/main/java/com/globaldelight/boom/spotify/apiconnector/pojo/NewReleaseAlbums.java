@@ -1,4 +1,4 @@
-package com.globaldelight.boom.spotify.pojo;
+package com.globaldelight.boom.spotify.apiconnector.pojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
