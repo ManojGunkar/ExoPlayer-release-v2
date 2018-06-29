@@ -277,6 +277,8 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigationToSpotify() {
+        navigationView.getMenu().findItem(R.id.spotify).setChecked(true);
+        setTitle(R.string.spotify);
         Fragment fragment = new SpotifyMainFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
